@@ -100,10 +100,8 @@ def set_motor_trq(robot, joint_id, command):
             command['joint_trq'].items()):
         joint_state = p.getJointState(robot, joint_id[joint_name])
         joint_pos, joint_vel = joint_state[0], joint_state[1]
-        trq_applied[joint_id[joint_name]] = (trq_des + DynSimConfig.KP *
-                                             (pos_des - joint_pos) +
-                                             DynSimConfig.KD *
-                                             (vel_des - joint_vel))
+        trq_applied[joint_id[joint_name]] = trq_des
+
     p.setJointMotorControlArray(robot,
                                 trq_applied.keys(),
                                 controlMode=p.TORQUE_CONTROL,

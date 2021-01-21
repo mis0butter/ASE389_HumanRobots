@@ -40,8 +40,13 @@ if __name__ == "__main__":
     nq, nv, na, joint_id, link_id, pos_basejoint_to_basecom, rot_basejoint_to_basecom = pybullet_util.get_robot_config(
         robot)
 
+    # Set Initial Config
+    p.resetJointState(robot, 0, -np.pi / 6., 0.)
+    p.resetJointState(robot, 1, np.pi / 6., 0.)
+    p.resetJointState(robot, 2, np.pi / 3., 0.)
+
     # Joint Friction
-    pybullet_util.set_joint_friction(robot, joint_id, 2)
+    pybullet_util.set_joint_friction(robot, joint_id, 0.1)
 
     # Construct Interface
     interface = ManipulatorInterface()
@@ -61,10 +66,10 @@ if __name__ == "__main__":
         command = interface.get_command(sensor_data)
 
         # Apply Trq
-        # pybullet_util.set_motor_trq(robot, joint_id, command)
+        pybullet_util.set_motor_trq(robot, joint_id, command)
 
         p.stepSimulation()
 
-        # time.sleep(dt)
+        time.sleep(dt)
         t += dt
         count += 1

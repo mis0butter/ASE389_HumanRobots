@@ -4,6 +4,8 @@ cwd = os.getcwd()
 sys.path.append(cwd)
 import time, math
 
+import numpy as np
+
 from pnc.interface import Interface
 from config.manipulator_config import ManipulatorConfig
 
@@ -37,10 +39,13 @@ class ManipulatorInterface(Interface):
             sensor_data["joint_vel"])
 
         # Operational Space Control
-        jtrq = self._compute_osc_command()
+        jtrq_cmd = self._compute_osc_command()
+        jpos_cmd = np.zeros_like(jtrq_cmd)
+        jvel_cmd = np.zeros_like(jtrq_cmd)
 
         # Compute Cmd
-        command = self._robot.create_cmd_ordered_dict()
+        command = self._robot.create_cmd_ordered_dict(jpos_cmd, jvel_cmd,
+                                                      jtrq_cmd)
 
         # Increase time variables
         self._count += 1
@@ -51,4 +56,5 @@ class ManipulatorInterface(Interface):
     def _compute_osc_command(self):
         ## TODO : Implement Operational Space Control
         jtrq = np.zeros(self._robot.n_a)
+
         return jtrq
