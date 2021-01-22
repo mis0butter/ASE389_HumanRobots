@@ -23,6 +23,6 @@ $ python simulator/pybullet/manipulator_main.py
 ```
 
 ## Implement Operational Space Control
-- Try to implement OSC control and fill out this [function](https://github.com/junhyeokahn/ASE389/blob/c59dcef47506383b7f99d1a4ece727023dd183ca/pnc/manipulator_pnc/manipulator_interface.py#L57) using an instance ```[self._robot](https://github.com/junhyeokahn/ASE389/blob/c59dcef47506383b7f99d1a4ece727023dd183ca/pnc/manipulator_pnc/manipulator_interface.py#L57)```
-- You could take look at [RobotSystem](https://github.com/junhyeokahn/ASE389/blob/main/pnc/robot_system/robot_system.py) for more details.
+- Try to implement OSC control and fill out this [function](https://github.com/junhyeokahn/ASE389/blob/c59dcef47506383b7f99d1a4ece727023dd183ca/pnc/manipulator_pnc/manipulator_interface.py#L57).
+- You could take look at [RobotSystem](https://github.com/junhyeokahn/ASE389/blob/main/pnc/robot_system/robot_system.py) to achieve relevant kinematics and dynamics properties of the robot.
 
