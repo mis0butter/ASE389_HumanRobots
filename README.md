@@ -11,7 +11,7 @@ $ git clone https://github.com/junhyeokahn/ASE389.git
 ```
 - Create a virtual environment and install Dependancies
 ```
-$ conda env create -f environment.yml
+$ conda env create -f ASE389.yml
 ```
 - Activate the environment
 ```

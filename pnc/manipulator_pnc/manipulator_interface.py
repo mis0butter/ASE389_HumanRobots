@@ -8,25 +8,17 @@ import numpy as np
 
 from pnc.interface import Interface
 from config.manipulator_config import ManipulatorConfig
+from pnc.robot_system.pinocchio_robot_system import PinocchioRobotSystem
 
 
 class ManipulatorInterface(Interface):
     def __init__(self):
         super(ManipulatorInterface, self).__init__()
 
-        if ManipulatorConfig.DYN_LIB == "dart":
-            from pnc.robot_system.dart_robot_system import DartRobotSystem
-            self._robot = DartRobotSystem(
-                cwd + "/robot_model/manipulator/three_link_manipulator.urdf",
-                True, ManipulatorConfig.PRINT_ROBOT_INFO)
-        elif ManipulatorConfig.DYN_LIB == "pinocchio":
-            from pnc.robot_system.pinocchio_robot_system import PinocchioRobotSystem
-            self._robot = PinocchioRobotSystem(
-                cwd + "/robot_model/manipulator/three_link_manipulator.urdf",
-                cwd + "/robot_model/manipulator", True,
-                ManipulatorConfig.PRINT_ROBOT_INFO)
-        else:
-            raise ValueError("wrong dynamics library")
+        self._robot = PinocchioRobotSystem(
+            cwd + "/robot_model/manipulator/three_link_manipulator.urdf",
+            cwd + "/robot_model/manipulator", True,
+            ManipulatorConfig.PRINT_ROBOT_INFO)
 
     def get_command(self, sensor_data):
         # Update Robot
