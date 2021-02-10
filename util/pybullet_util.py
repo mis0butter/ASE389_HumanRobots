@@ -227,3 +227,20 @@ def is_key_triggered(keys, key):
     if o in keys:
         return keys[ord(key)] & p.KEY_WAS_TRIGGERED
     return False
+
+
+def get_link_iso(robot, link_idx):
+    info = p.getLinkState(robot, link_idx, 1, 1)
+    pos = np.array(info[0])
+    rot = util.quat_to_rot(np.array(info[1]))
+
+    return liegroup.RpToTrans(rot, pos)
+
+
+def get_link_vel(robot, link_idx):
+    info = p.getLinkState(robot, link_idx, 1, 1)
+    ret = np.zeros(6)
+    ret[3:6] = np.array(info[6])
+    ret[0:3] = np.array(info[7])
+
+    return ret
