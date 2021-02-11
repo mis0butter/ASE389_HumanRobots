@@ -8,6 +8,7 @@ dependencies:
       - certifi==2020.12.5
       - conda-env-export==0.2.2
       - ipdb==0.13.4
+      - meshcat==0.0.19
       - pybullet==3.0.8
       - scipy==1.6.0
       - wheel==0.36.2
