@@ -47,6 +47,18 @@ class ManipulatorInterface(Interface):
 
     def _compute_osc_command(self):
         ## TODO : Implement Operational Space Control
-        jtrq = np.zeros(self._robot.n_a)
+        # jtrq = np.zeros(self._robot.n_a)
+        KP = self._robot.KP 
+        q = self._robot.get_q() 
+        q_des = np.array( [ np.pi/4, np.pi/4, np.pi/4 ] )
+        q_dot_dot = - KP * ( q - q_des ) 
+
+        A = self._robot.get_mass_matrix() 
+
+        jtrq = A.dot(q_dot_dot) 
+        
+        # print(self._robot.get_mass_matrix())
+
+
 
         return jtrq
