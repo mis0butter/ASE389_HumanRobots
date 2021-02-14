@@ -55,7 +55,11 @@ if __name__ == "__main__":
     t = 0
     dt = ManipulatorConfig.DT
     count = 0
-    while (1):
+
+    # initialize position array 
+    position = np.array([[ 0, 0, 0, 0 ]]) 
+
+    while (t < 10 ):
 
         # Get SensorData
         sensor_data = pybullet_util.get_sensor_data(robot, joint_id, link_id,
@@ -73,3 +77,20 @@ if __name__ == "__main__":
         time.sleep(dt)
         t += dt
         count += 1
+
+        # extract position 
+
+        # base_joint_pos = sensor_data['base_joint_pos']
+        # print('base_joint_pos')
+        # print(base_joint_pos)
+
+        # # end effector configuration 
+        # ee = self._robot.get_link_iso('ee')
+        j0_pos = pybullet_util.get_link_iso(robot, 0)
+        print('j0 pos through get_link_iso')
+        print(j0_pos)
+        # xytheta = ee[0:3, 3] 
+        # # print(xytheta)
+        # position = np.append( position, [ t, [xytheta]], axis = 0 )
+
+# plot things here 

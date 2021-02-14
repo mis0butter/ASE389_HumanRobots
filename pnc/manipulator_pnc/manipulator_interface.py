@@ -58,7 +58,7 @@ class ManipulatorInterface(Interface):
 
         # q segment stuff 
         q = self._robot.get_q() 
-        q_des = np.array( [ np.pi/4, np.pi/4, np.pi/4 ] )
+        q_des = np.array( [ np.pi/4, np.pi/6, np.pi/12 ] )
         q_dot = self._robot.get_q_dot() 
         q_dot_des = np.array( [0, 0, 0])
 
@@ -76,10 +76,15 @@ class ManipulatorInterface(Interface):
 
         # end effector configuration 
         ee = self._robot.get_link_iso('ee')
-        print(ee)
+        xytheta = ee[0:3, 3] 
+        # print(xytheta)
+
+        # position = np.array([[ 0, 0, 0 ]]) 
+        # position = np.append( position, [[xytheta]], axis = 0 )
+
+        # position = 0 
+        # position.append = xytheta 
         
         # print(self._robot.get_mass_matrix()) 
-
-
 
         return jtrq

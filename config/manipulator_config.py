@@ -12,5 +12,5 @@ class ManipulatorConfig(object):
     DYN_LIB = "pinocchio"  # "dart"
 
     DES_EE_POS = np.array([1., 2., 0.])
-    KP = 400.0
-    KD = 40.0
+    KP = 4.0
+    KD = 4.0
