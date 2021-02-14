@@ -74,7 +74,7 @@ class ManipulatorInterface(Interface):
         A = self._robot.get_mass_matrix() 
 
         # calculate torque 
-        jtrq = A.dot(q_dot_dot) 
+        # jtrq = A.dot(q_dot_dot) 
 
         # position = 0 
         # position.append = xytheta 
@@ -83,7 +83,108 @@ class ManipulatorInterface(Interface):
 
         # QUESTION 3 --------------------------------------------------------------- # 
         
-        
+        l1 = 1 
+        l2 = 1
+        l3 = 1 
 
+        q1 = q[0]
+        q2 = q[1]
+        q3 = q[2]
+        
+        ee = self._robot.get_link_iso('ee') 
+
+        ee = ee[0:3, 3]
+        ee_dot = self._robot.get_link_vel('ee') 
+        ee_dot = ee_dot[0:3]
+
+        ee_des = ManipulatorConfig.DES_EE_POS 
+        ee_des_dot = np.array([0, 0, 0])
+
+        # control law 
+
+        ee_dot_dot = - KP * ( ee - ee_des ) - KD * ( ee_dot - ee_des_dot )
+
+        ee_Jxq1 = -l1 * np.sin( q1 ) - l2 * np.sin( q1 - q2 ) - l3 * np.sin( q1 - q2 + q3 ) 
+        ee_Jxq2 = -l2 * np.sin( q1 + q2 ) - l3 * np.sin( q1 + q2 + q3 ) 
+        ee_Jxq3 = -l3 * np.sin( q1 + q2 + q3 )
+
+        ee_Jyq1 = l1 * np.cos( q1 ) + l2 * np.cos( q1 - q2 ) + l3 * np.cos( q1 - q2 + q3 ) 
+        ee_Jyq2 = l2 * np.cos( q1 + q2 ) + l3 * np.cos( q1 + q2 + q3 ) 
+        ee_Jyq3 = l3 * np.cos( q1 + q2 + q3 ) 
+
+        ee_Jthq1 = 1
+        ee_Jthq2 = 1 
+        ee_Jthq3 = 1 
+
+        ee_J = np.array( [[ee_Jxq1, ee_Jxq2, ee_Jxq3], [ ee_Jyq1, ee_Jyq2, ee_Jyq3 ], [ ee_Jthq1, ee_Jthq2, ee_Jthq3 ] ] ) 
+
+        # ee_J = self._robot.get_link_jacobian('ee')
+        # ee_J = ee_J[3:6,:]
+
+        ee_JT = np.transpose(np.asmatrix(ee_J))
+        # ee_J.asmatrix()  
+        A_mat = np.asmatrix(A) 
+        ee_dot_dotT_mat = np.transpose(np.asmatrix(ee_dot_dot)) 
+
+        F = np.linalg.pinv(A_mat).dot(ee_dot_dotT_mat)
+
+        # jtrq = F.dot(ee_JT)
+        # jtrq = ee_JT.dot(F)
+
+        # QUESTION 4 --------------------------------------------------------------- # 
+
+        import pdb ; pdb.set_trace() 
+
+        N = np.eye(3) - np.linalg.pinv(ee_J) * ee_J
+
+        J1 = ee_J; 
+
+        T1 = J1 * F 
+
+        T2 = A.dot(q_dot_dot); 
+
+        jtrq = T1 + N * T2 
+
+
+
+
+
+
+        # WBC-EOM
+        # A * gen_acc + Nc' * (b + g) + Jc * Mc * Jc_dot * gen_pos = (U * Nc)' * T 
+
+        # choose T s.t. task coordinate xi will follow ref trajectories 
+        # transform WBC-EOM into task-space - multiply by ( U * Nc * A^-1 )
+
+        # ( U * Nc * A^-1 ) * A * gen_acc + ( U * Nc * A^-1 ) * Nc' * (b + g) + ( U * Nc * A^-1 ) * Jc * Mc * Jc_dot * gen_pos = ( U * Nc * A^-1 ) * (U * Nc)' * T 
+
+        # ( U * Nc * gen_acc ) + ( U * Nc * A^-1 * Nc' * (b + g) ) + ( U * Nc * A^-1 * Jc * Mc * Jc_dot * gen_pos ) = U * Nc * A^-1 * (U _ Nc)' * T 
+
+        # q_dot_dot = U * Nc * gen_acc + d/dt(U * Nc) * gen_vel
+        # q_dot_dot - d/dt(U * Nc) * gen_vel + ( U * Nc * A^-1 * Nc' * (b + g) ) + ( U * Nc * A^-1 * Jc * Mc * Jc_dot * gen_pos ) = U * Nc * A^-1 * (U _ Nc)' * T 
+
+        # left-multiply by J_dot 
+        # x_dot_dot - J_dot * q_dot - J_dot * d/dt(U * Nc) * gen_vel + J_dot * ( U * Nc * A^-1 * Nc' * (b + g) ) + J_dot * ( U * Nc * A^-1 * Jc * Mc * Jc_dot * gen_pos ) = J_dot * U * Nc * A^-1 * (U _ Nc)' * T 
+
+        # plug in linear control T = J' * F
+        # x_dot_dot - J_dot * q_dot - J_dot * d/dt(U * Nc) * gen_vel + J_dot * ( U * Nc * A^-1 * Nc' * (b + g) ) + J_dot * ( U * Nc * A^-1 * Jc * Mc * Jc_dot * gen_pos ) = J_dot * U * Nc * A^-1 * (U _ Nc)' * J' * F 
+
+        # phi = U * Nc * A^-1 * (U _ Nc)' 
+        # M = ( J * phi * J' )^-1
+        # x_dot_dot - J_dot * q_dot - J_dot * d/dt(U * Nc) * gen_vel + J_dot * ( U * Nc * A^-1 * Nc' * (b + g) ) + J_dot * ( U * Nc * A^-1 * Jc * Mc * Jc_dot * gen_pos ) = M^-1 * F 
+
+        # simplify 
+        # d/dt(U * Nc) = 0 (unchanging)
+        # x_dot_dot - J_dot * q_dot + J_dot * ( U * Nc * A^-1 * Nc' * (b + g) ) + J_dot * ( U * Nc * A^-1 * Jc * Mc * Jc_dot * gen_pos ) = M^-1 * F 
+
+        # rewrite for F 
+        # F = M * ( x_dot_dot - J_dot * q_dot + J_dot * ( U * Nc * A^-1 * Nc' * (b + g) ) + J_dot * ( U * Nc * A^-1 * Jc * Mc * Jc_dot * gen_pos ) )
+
+        # decoupled control of task accelerations, i.e. "other terms" go to 0 
+        # x_dot_dot + "other terms" = M^-1 * M^+ * (a_ref + "other terms")
+        # --> 
+        # x_dot_dot = a_ref 
+
+        # F = M * a_ref 
 
         return jtrq

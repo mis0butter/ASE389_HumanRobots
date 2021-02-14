@@ -221,9 +221,11 @@ class PinocchioRobotSystem(RobotSystem):
         trans = pin.updateFramePlacement(self._model, self._data, frame_id)
         ret[0:3, 0:3] = trans.rotation
 
+        # import pdb ; pdb.set_trace() 
+
         # this is the position - x, y, theta 
-        ret[0:3, 3] = trans.translation
-        return np.copy(ret)
+        ret[0:3, 3] = trans.translation 
+        return np.copy(ret) 
 
     def get_link_vel(self, link_id):
         ret = np.zeros(6)
