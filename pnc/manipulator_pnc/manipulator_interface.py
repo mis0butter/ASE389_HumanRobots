@@ -3,6 +3,7 @@ import sys
 cwd = os.getcwd()
 sys.path.append(cwd)
 import time, math
+import matplotlib 
 
 import numpy as np
 
@@ -48,16 +49,36 @@ class ManipulatorInterface(Interface):
     def _compute_osc_command(self):
         ## TODO : Implement Operational Space Control
         # jtrq = np.zeros(self._robot.n_a)
-        KP = self._robot.KP 
+
+        # proportional K 
+        KP = ManipulatorConfig.KP 
+
+        # derivative K 
+        KD = ManipulatorConfig.KD 
+
+        # q segment stuff 
         q = self._robot.get_q() 
         q_des = np.array( [ np.pi/4, np.pi/4, np.pi/4 ] )
-        q_dot_dot = - KP * ( q - q_des ) 
+        q_dot = self._robot.get_q_dot() 
+        q_dot_des = np.array( [0, 0, 0])
 
+        # coriolis forces 
+        cf = self._robot.get_coriolis() 
+
+        # control law 
+        q_dot_dot = - KP * ( q - q_des ) - KD * ( q_dot - q_dot_des )
+
+        # mass matrix 
         A = self._robot.get_mass_matrix() 
 
+        # calculate torque 
         jtrq = A.dot(q_dot_dot) 
+
+        # end effector configuration 
+        ee = self._robot.get_link_iso('ee')
+        print(ee)
         
-        # print(self._robot.get_mass_matrix())
+        # print(self._robot.get_mass_matrix()) 
 
 
 
