@@ -76,11 +76,6 @@ class ManipulatorInterface(Interface):
         # calculate torque 
         # jtrq = A.dot(q_dot_dot) 
 
-        # position = 0 
-        # position.append = xytheta 
-        
-        # print(self._robot.get_mass_matrix()) 
-
         # QUESTION 3 --------------------------------------------------------------- # 
         
         l1 = 1 
@@ -129,11 +124,13 @@ class ManipulatorInterface(Interface):
         F = np.linalg.pinv(A_mat).dot(ee_dot_dotT_mat)
 
         # jtrq = F.dot(ee_JT)
-        # jtrq = ee_JT.dot(F)
+
+        # this one 
+        jtrq = ee_JT.dot(F)
 
         # QUESTION 4 --------------------------------------------------------------- # 
 
-        import pdb ; pdb.set_trace() 
+        # import pdb ; pdb.set_trace() 
 
         N = np.eye(3) - np.linalg.pinv(ee_J) * ee_J
 
@@ -143,7 +140,7 @@ class ManipulatorInterface(Interface):
 
         T2 = A.dot(q_dot_dot); 
 
-        jtrq = T1 + N * T2 
+        # jtrq = T1 + N * T2 
 
 
 
