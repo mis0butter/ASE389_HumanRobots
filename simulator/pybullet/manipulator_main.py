@@ -8,6 +8,9 @@ from collections import OrderedDict
 import pybullet as p
 import numpy as np
 
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+
 from util import pybullet_util
 from config.manipulator_config import ManipulatorConfig
 from pnc.manipulator_pnc.manipulator_interface import ManipulatorInterface
@@ -57,9 +60,18 @@ if __name__ == "__main__":
     count = 0
 
     # initialize position array 
-    position = np.array([[ 0, 0, 0, 0 ]]) 
+    xytheta = pybullet_util.get_link_iso(robot, 0) 
+    j0_pos = [ xytheta[0:3, 3] ]
 
-    while (t < 10 ):
+    xytheta = pybullet_util.get_link_iso(robot, 1) 
+    j1_pos = [ xytheta[0:3, 3] ]
+
+    xytheta = pybullet_util.get_link_iso(robot, 2) 
+    j2_pos = [ xytheta[0:3, 3] ]
+
+    # position = np.array( [[ 0, 0, 0 ]] ) 
+
+    while (t < 1 ):
 
         # Get SensorData
         sensor_data = pybullet_util.get_sensor_data(robot, joint_id, link_id,
@@ -80,17 +92,34 @@ if __name__ == "__main__":
 
         # extract position 
 
-        # base_joint_pos = sensor_data['base_joint_pos']
-        # print('base_joint_pos')
-        # print(base_joint_pos)
-
         # # end effector configuration 
         # ee = self._robot.get_link_iso('ee')
-        j0_pos = pybullet_util.get_link_iso(robot, 0)
-        print('j0 pos through get_link_iso')
-        print(j0_pos)
-        # xytheta = ee[0:3, 3] 
-        # # print(xytheta)
-        # position = np.append( position, [ t, [xytheta]], axis = 0 )
+        xytheta = pybullet_util.get_link_iso(robot, 0)
+        xytheta = xytheta[0:3, 3]
+        j0_pos = np.append( j0_pos, [xytheta], axis = 0 )
+
+        xytheta = pybullet_util.get_link_iso(robot, 1)
+        xytheta = xytheta[0:3, 3]
+        j1_pos = np.append( j1_pos, [xytheta], axis = 0 )
+
+        xytheta = pybullet_util.get_link_iso(robot, 2)
+        xytheta = xytheta[0:3, 3]
+        j2_pos = np.append( j2_pos, [xytheta], axis = 0 )
+
 
 # plot things here 
+print('x')
+print(j0_pos[:,0])
+
+ax = plt.axes(projection='3d')
+
+line1, = ax.plot3D(j0_pos[:,0], j0_pos[:,1], j0_pos[:,2])
+line2, = ax.plot3D(j1_pos[:,0], j1_pos[:,1], j1_pos[:,2])
+line3, = ax.plot3D(j2_pos[:,0], j2_pos[:,1], j2_pos[:,2])
+ax.set_title('j0, j1, j2 position')
+ax.set_xlabel('x')
+ax.set_ylabel('y')
+ax.set_zlabel('z')
+ax.legend(( line1, line2, line3 ), ('j0', 'j1', 'j2'))
+plt.show()
+

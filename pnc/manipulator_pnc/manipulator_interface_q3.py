@@ -12,9 +12,9 @@ from config.manipulator_config import ManipulatorConfig
 from pnc.robot_system.pinocchio_robot_system import PinocchioRobotSystem
 
 
-class ManipulatorInterface(Interface):
+class ManipulatorInterface_q3(Interface):
     def __init__(self):
-        super(ManipulatorInterface, self).__init__()
+        super(ManipulatorInterface_q3, self).__init__()
 
         self._robot = PinocchioRobotSystem(
             cwd + "/robot_model/manipulator/three_link_manipulator.urdf",
@@ -50,8 +50,6 @@ class ManipulatorInterface(Interface):
         ## TODO : Implement Operational Space Control
         # jtrq = np.zeros(self._robot.n_a)
 
-        # QUESTION 2 --------------------------------------------------------------- # 
-
         # proportional K 
         KP = ManipulatorConfig.KP 
 
@@ -80,10 +78,5 @@ class ManipulatorInterface(Interface):
         # position.append = xytheta 
         
         # print(self._robot.get_mass_matrix()) 
-
-        # QUESTION 3 --------------------------------------------------------------- # 
-        
-        
-
 
         return jtrq
