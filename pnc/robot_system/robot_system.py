@@ -373,10 +373,10 @@ class RobotSystem(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def get_link_jacobian_dot(self, link_id):
+    def get_link_jacobian_dot_times_qdot(self, link_id):
         """
         Returns
         -------
-        link_jac_dot (np.array): Link jacobian dot
+        link_jac_dot (np.array): Link jacobian_dot times qdot
         """
         pass
