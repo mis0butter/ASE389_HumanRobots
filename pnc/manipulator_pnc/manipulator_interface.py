@@ -63,7 +63,8 @@ class ManipulatorInterface(Interface):
 
         # q segment stuff 
         q = self._robot.get_q() 
-        q_des = np.array( [ np.pi/4, np.pi/6, np.pi/12 ] )
+        q_des = np.array( [ np.pi/2, np.pi/2, np.pi/2 ] )
+        # q_des = np.array( [0, 0, 0] )
         q_dot = self._robot.get_q_dot() 
         q_dot_des = np.array( [0, 0, 0]) 
 
@@ -77,7 +78,8 @@ class ManipulatorInterface(Interface):
         A = self._robot.get_mass_matrix() 
 
         # calculate torque 
-        # jtrq = A.dot(q_dot_dot) 
+        # jtrq = A.dot(q_dot_dot) + cf
+        jtrq = A.dot(q_dot_dot) 
 
         # QUESTION 3 --------------------------------------------------------------- # 
         
@@ -130,7 +132,7 @@ class ManipulatorInterface(Interface):
         # jtrq = F.dot(ee_JT)
 
         # this one 
-        jtrq = ee_JT.dot(F)
+        # jtrq = ee_JT.dot(F)
 
         # QUESTION 4 --------------------------------------------------------------- # 
 
@@ -143,29 +145,33 @@ class ManipulatorInterface(Interface):
         # J21 = J2 * N1 
         # F2 = M21 * a_ref + o.t. 
         # M21 = np.linalg.pinv(J21 * phi * J21') 
-        # M21 = np.linalg.pinv(J21 * A * J21') <--- try this one 
+        # M21 = np.linalg.pinv(J21 * inv(A) * J21') <--- try this one 
 
         # phi = U * Nc * A^-1 * ( U * Nc )' 
         # phi = 
 
-        import pdb ; pdb.set_trace() 
+        # import pdb ; pdb.set_trace() 
 
         # nullspace of J1 
-        N1 = np.eye(3) - np.linalg.pinv(ee_J) @ ee_J 
+        # N1 = np.eye(3) - np.linalg.pinv(ee_J) @ ee_J 
 
         # # sympy matrix nullspace 
         # A_Mat = Matrix(A_mat) 
         # A_null = A_Mat.nullspace() 
         # N1 = A_null 
 
-        J1 = np.matrix(ee_J) 
-        J1 = np.matrix( [[1], [1], [1]] )
+        # J1 = np.matrix(ee_J) 
+        J1 = np.matrix( [ [0, 0, 0], [0, 0, 0], ee_J[2,:] ] )
+        # J2 = ee_J[0:2,:]
+        J2 = np.vstack( [ ee_J[0:2,:], [0, 0, 0] ] )
+        N1 = np.eye(3) - np.linalg.pinv(np.transpose(J1)) @ np.transpose(J1)
         F1 = F 
 
         T1 = np.dot( np.transpose(J1), F1) 
 
         # T2 = A.dot(q_dot_dot); 
-        J21 = np.eye(3) @ N1 
+        # J21 = np.eye(3) @ N1
+        J21 = J2 @ N1  
         J21 = np.matrix(J21)
         M21 = np.linalg.pinv( J21 @ np.linalg.pinv(A) @ np.transpose(J21) ) 
         F2 = M21 @ np.transpose(np.matrix(q_dot_dot)) 
@@ -173,7 +179,8 @@ class ManipulatorInterface(Interface):
 
         T = T1 + T2
 
-        jtrq = np.array(np.transpose(T)) 
+        # jtrq = np.array(np.transpose(T)) 
+        # jtrq = T 
 
 
 

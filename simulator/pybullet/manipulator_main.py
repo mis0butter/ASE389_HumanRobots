@@ -72,6 +72,13 @@ if __name__ == "__main__":
     xytheta = pybullet_util.get_link_iso(robot, 3) 
     ee_pos = [ xytheta[0:3, 3] ]
 
+
+    # import pdb ; pdb.set_trace() 
+    theta = np.arccos ( np.dot( ee_pos , [1, 0, 0] ) / np.linalg.norm(ee_pos) )
+
+    # q123 = PinocchioRobotSystem._robot.get_q(robot) 
+    # theta = q123[0] + q123[1] + q123[2]
+
     # position = np.array( [[ 0, 0, 0 ]] ) 
 
     while (t < 20 ):
@@ -99,6 +106,7 @@ if __name__ == "__main__":
         # ee = self._robot.get_link_iso('ee')
 
 
+
         xytheta = pybullet_util.get_link_iso(robot, 0)
         xytheta = xytheta[0:3, 3]
         j0_pos = np.append( j0_pos, [xytheta], axis = 0 )
@@ -115,23 +123,26 @@ if __name__ == "__main__":
         xytheta = xytheta[0:3, 3]
         ee_pos = np.append( ee_pos, [xytheta], axis = 0 )
 
+        # t = np.arccos ( np.dot( xytheta , [1, 0, 0] ) / np.linalg.norm(xytheta) )
+        # theta = np.append(theta, [t], axis = 0)
+
 
 # plot things here 
 
 ax = plt.axes(projection='3d')
 
-# line1, = ax.plot3D(j0_pos[:,0], j0_pos[:,1], j0_pos[:,2])
-# line2, = ax.plot3D(j1_pos[:,0], j1_pos[:,1], j1_pos[:,2])
-# line3, = ax.plot3D(j2_pos[:,0], j2_pos[:,1], j2_pos[:,2])
-line4, = ax.plot3D(ee_pos[:,0], ee_pos[:,1], ee_pos[:,2])
+line1, = ax.plot3D(j0_pos[:,0], j0_pos[:,1], j0_pos[:,2])
+line2, = ax.plot3D(j1_pos[:,0], j1_pos[:,1], j1_pos[:,2])
+line3, = ax.plot3D(j2_pos[:,0], j2_pos[:,1], j2_pos[:,2])
+# line4, = ax.plot3D(ee_pos[:,0], ee_pos[:,1], ee_pos[:,2])
 # ax.set_title('j0, j1, j2, ee position')
-# ax.set_title('j0, j1, j2 position')
-ax.set_title('ee position')
+ax.set_title('j0, j1, j2 position')
+# ax.set_title('ee position')
 ax.set_xlabel('x')
 ax.set_ylabel('y')
 ax.set_zlabel('z')
 # ax.legend(( line1, line2, line3, line4 ), ('j0', 'j1', 'j2', 'ee'))
-# ax.legend(( line1, line2, line3), ('j0', 'j1', 'j2'))
+ax.legend(( line1, line2, line3), ('j0', 'j1', 'j2'))
 # ax.legend( (line4), ('ee'))
 plt.show()
 
