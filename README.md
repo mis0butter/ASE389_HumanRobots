@@ -22,7 +22,7 @@ $ conda activate ASE389
 $ python simulator/pybullet/manipulator_main.py
 ```
 
-## Update to the newset code
+## Update to the newest code
 - Pull the latest code
 ```
 $ git pull origin main
