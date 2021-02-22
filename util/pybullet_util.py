@@ -86,6 +86,14 @@ def get_kinematics_config(robot, joint_id, link_id, open_chain_joints,
     return joint_screws_in_ee, T_b_ee
 
 
+def set_link_damping(robot, link_id, lin_damping, ang_damping):
+    for i in link_id:
+        p.changeDynamics(robot,
+                         i,
+                         linearDamping=lin_damping,
+                         angularDamping=ang_damping)
+
+
 def set_joint_friction(robot, joint_id, max_force=0):
     p.setJointMotorControlArray(robot, [*joint_id.values()],
                                 p.VELOCITY_CONTROL,
