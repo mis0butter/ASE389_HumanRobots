@@ -5,7 +5,10 @@ sys.path.append(cwd)
 import time, math
 import matplotlib 
 
-import numpy as np
+import numpy as np 
+import scipy as sp 
+from scipy.linalg import null_space
+from sympy import Matrix
 
 from pnc.interface import Interface
 from config.manipulator_config import ManipulatorConfig
@@ -62,7 +65,7 @@ class ManipulatorInterface(Interface):
         q = self._robot.get_q() 
         q_des = np.array( [ np.pi/4, np.pi/6, np.pi/12 ] )
         q_dot = self._robot.get_q_dot() 
-        q_dot_des = np.array( [0, 0, 0])
+        q_dot_des = np.array( [0, 0, 0]) 
 
         # coriolis forces 
         cf = self._robot.get_coriolis() 
@@ -121,7 +124,8 @@ class ManipulatorInterface(Interface):
         A_mat = np.asmatrix(A) 
         ee_dot_dotT_mat = np.transpose(np.asmatrix(ee_dot_dot)) 
 
-        F = np.linalg.pinv(A_mat).dot(ee_dot_dotT_mat)
+        # F = np.linalg.pinv(A_mat).dot(ee_dot_dotT_mat) 
+        F = A_mat.dot(ee_dot_dotT_mat) 
 
         # jtrq = F.dot(ee_JT)
 
@@ -130,17 +134,46 @@ class ManipulatorInterface(Interface):
 
         # QUESTION 4 --------------------------------------------------------------- # 
 
-        # import pdb ; pdb.set_trace() 
 
-        N = np.eye(3) - np.linalg.pinv(ee_J) * ee_J
+        # from notes: 
+        # T = T1 + T2 
+        # T1 = J1' * F1
+        # T2 = J21' * F2
 
-        J1 = ee_J; 
+        # J21 = J2 * N1 
+        # F2 = M21 * a_ref + o.t. 
+        # M21 = np.linalg.pinv(J21 * phi * J21') 
+        # M21 = np.linalg.pinv(J21 * A * J21') <--- try this one 
 
-        T1 = J1 * F 
+        # phi = U * Nc * A^-1 * ( U * Nc )' 
+        # phi = 
 
-        T2 = A.dot(q_dot_dot); 
+        import pdb ; pdb.set_trace() 
 
-        # jtrq = T1 + N * T2 
+        # nullspace of J1 
+        N1 = np.eye(3) - np.linalg.pinv(ee_J) @ ee_J 
+
+        # # sympy matrix nullspace 
+        # A_Mat = Matrix(A_mat) 
+        # A_null = A_Mat.nullspace() 
+        # N1 = A_null 
+
+        J1 = np.matrix(ee_J) 
+        J1 = np.matrix( [[1], [1], [1]] )
+        F1 = F 
+
+        T1 = np.dot( np.transpose(J1), F1) 
+
+        # T2 = A.dot(q_dot_dot); 
+        J21 = np.eye(3) @ N1 
+        J21 = np.matrix(J21)
+        M21 = np.linalg.pinv( J21 @ np.linalg.pinv(A) @ np.transpose(J21) ) 
+        F2 = M21 @ np.transpose(np.matrix(q_dot_dot)) 
+        T2 = np.transpose(J21) @ F2  
+
+        T = T1 + T2
+
+        jtrq = np.array(np.transpose(T)) 
 
 
 
