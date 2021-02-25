@@ -114,6 +114,7 @@ class WBC(object):
             j = task.jacobian
             j_dot_q_dot = task.jacobian_dot_q_dot
             x_ddot = task.op_cmd
+            w = self._w_hierarchy[i]
             if verbose:
                 print(i, " th task")
                 task.debug()
