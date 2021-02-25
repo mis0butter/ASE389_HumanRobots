@@ -90,10 +90,85 @@ class SurfaceContact(Contact):
     def _get_u(self, x, y, mu):
         u = np.zeros((16 + 2, 6))
 
-        u[0, 5] = 1.  ## Fz >= 0
-        u[17, 5] = -1.  ## -Fz >= max_normal_force
+        u[0, 5] = 1.
 
-        ## TODO : Implement inequality matrix for contact wrench cone constraint by following https://arxiv.org/pdf/1501.04719.pdf
-        __import__('ipdb').set_trace()
+        u[1, 3] = 1.
+        u[1, 5] = mu
+        u[2, 3] = -1.
+        u[2, 5] = mu
+
+        u[3, 4] = 1.
+        u[3, 5] = mu
+        u[4, 4] = -1.
+        u[4, 5] = mu
+
+        u[5, 0] = 1.
+        u[5, 5] = y
+        u[6, 0] = -1.
+        u[6, 5] = y
+
+        u[7, 1] = 1.
+        u[7, 5] = x
+        u[8, 1] = -1.
+        u[8, 5] = x
+
+        ##tau
+        u[9, 0] = -mu
+        u[9, 1] = -mu
+        u[9, 2] = 1.
+        u[9, 3] = y
+        u[9, 4] = x
+        u[9, 5] = (x + y) * mu
+
+        u[10, 0] = -mu
+        u[10, 1] = mu
+        u[10, 2] = 1.
+        u[10, 3] = y
+        u[10, 4] = -x
+        u[10, 5] = (x + y) * mu
+
+        u[11, 0] = mu
+        u[11, 1] = -mu
+        u[11, 2] = 1.
+        u[11, 3] = -y
+        u[11, 4] = x
+        u[11, 5] = (x + y) * mu
+
+        u[12, 0] = mu
+        u[12, 1] = mu
+        u[12, 2] = 1.
+        u[12, 3] = -y
+        u[12, 4] = -x
+        u[12, 5] = (x + y) * mu
+
+        u[13, 0] = -mu
+        u[13, 1] = -mu
+        u[13, 2] = -1.
+        u[13, 3] = -y
+        u[13, 4] = -x
+        u[13, 5] = (x + y) * mu
+
+        u[14, 0] = -mu
+        u[14, 1] = mu
+        u[14, 2] = -1.
+        u[14, 3] = -y
+        u[14, 4] = x
+        u[14, 5] = (x + y) * mu
+
+        u[15, 0] = mu
+        u[15, 1] = -mu
+        u[15, 2] = -1.
+        u[15, 3] = y
+        u[15, 4] = -x
+        u[15, 5] = (x + y) * mu
+
+        u[16, 0] = mu
+        u[16, 1] = mu
+        u[16, 2] = -1.
+        u[16, 3] = y
+        u[16, 4] = x
+        u[16, 5] = (x + y) * mu
+
+        u[17, 5] = -1.
 
         return u
