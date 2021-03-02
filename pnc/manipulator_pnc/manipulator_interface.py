@@ -79,7 +79,7 @@ class ManipulatorInterface(Interface):
 
         # calculate torque 
         # jtrq = A.dot(q_dot_dot) + cf
-        jtrq = A.dot(q_dot_dot) 
+        # jtrq = A.dot(q_dot_dot) 
 
         # QUESTION 3 --------------------------------------------------------------- # 
         
@@ -101,7 +101,6 @@ class ManipulatorInterface(Interface):
         ee_des_dot = np.array([0, 0, 0])
 
         # control law 
-
         ee_dot_dot = - KP * ( ee - ee_des ) - KD * ( ee_dot - ee_des_dot )
 
         ee_Jxq1 = -l1 * np.sin( q1 ) - l2 * np.sin( q1 - q2 ) - l3 * np.sin( q1 - q2 + q3 ) 
@@ -121,13 +120,36 @@ class ManipulatorInterface(Interface):
         # ee_J = self._robot.get_link_jacobian('ee')
         # ee_J = ee_J[3:6,:]
 
-        ee_JT = np.transpose(np.asmatrix(ee_J))
+        ee_JT = np.transpose(np.asmatrix(ee_J)) 
         # ee_J.asmatrix()  
         A_mat = np.asmatrix(A) 
         ee_dot_dotT_mat = np.transpose(np.asmatrix(ee_dot_dot)) 
 
+        U_1 = np.zeros((3,3)) 
+        U_2 = np.zeros((3,3))
+        U_3 = np.eye(3)
+
+        # U = np.concatenate( (U_1, U_2, U_3), axis=1 )
+        U = np.eye(3)
+
+        # import pdb ; pdb.set_trace() 
+
+        UNc_bar_2 = np.linalg.pinv( U @ np.linalg.inv(A) @ np.transpose(U) )
+        UNc_bar = np.linalg.pinv(A) @ np.transpose(U) @ UNc_bar_2 
+
+        J_star = ee_J @ UNc_bar 
+
+        M_star = np.linalg.inv( J_star @ U @ np.linalg.inv(A) @ np.transpose(U) @ np.transpose(J_star) )
+
+        # x_dot_dot = ee_dot_dot 
+        # cf = coriolis forces = b 
+        g = self._robot.get_gravity()
+        F = M_star @ ( ee_dot_dot + J_star @ U @ np.linalg.inv(A) @ (cf + g) )
+
+        jtrq = np.transpose(J_star) @ F
+
         # F = np.linalg.pinv(A_mat).dot(ee_dot_dotT_mat) 
-        F = A_mat.dot(ee_dot_dotT_mat) 
+        # F = A_mat.dot(ee_dot_dotT_mat) 
 
         # jtrq = F.dot(ee_JT)
 
