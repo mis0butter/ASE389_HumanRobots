@@ -64,7 +64,7 @@ class ManipulatorInterface(Interface):
         # q segment stuff 
         q = self._robot.get_q() 
         q_des = np.array( [ np.pi/2, np.pi/2, np.pi/2 ] )
-        # q_des = np.array( [0, 0, 0] )
+        # q_des = np.array( [ 0, 0, 0 ] )
         q_dot = self._robot.get_q_dot() 
         q_dot_des = np.array( [0, 0, 0]) 
 
@@ -78,7 +78,7 @@ class ManipulatorInterface(Interface):
         A = self._robot.get_mass_matrix() 
 
         # calculate torque 
-        # jtrq = A.dot(q_dot_dot) + cf
+        jtrq = A.dot(q_dot_dot) + cf
         # jtrq = A.dot(q_dot_dot) 
 
         # QUESTION 3 --------------------------------------------------------------- # 
@@ -115,24 +115,22 @@ class ManipulatorInterface(Interface):
         ee_Jthq2 = 1 
         ee_Jthq3 = 1 
 
-        ee_J = np.array( [[ee_Jxq1, ee_Jxq2, ee_Jxq3], [ ee_Jyq1, ee_Jyq2, ee_Jyq3 ], [ ee_Jthq1, ee_Jthq2, ee_Jthq3 ] ] ) 
+        # ee_J = np.array( [[ee_Jxq1, ee_Jxq2, ee_Jxq3], [ ee_Jyq1, ee_Jyq2, ee_Jyq3 ], [ ee_Jthq1, ee_Jthq2, ee_Jthq3 ] ] ) 
 
-        # ee_J = self._robot.get_link_jacobian('ee')
-        # ee_J = ee_J[3:6,:]
+        ee_J = self._robot.get_link_jacobian('ee')
+        ee_J = ee_J[3:6,:]
 
-        ee_JT = np.transpose(np.asmatrix(ee_J)) 
-        # ee_J.asmatrix()  
-        A_mat = np.asmatrix(A) 
-        ee_dot_dotT_mat = np.transpose(np.asmatrix(ee_dot_dot)) 
+        # ee_JT = np.transpose(np.asmatrix(ee_J)) 
+        # # ee_J.asmatrix()  
+        # A_mat = np.asmatrix(A) 
+        # ee_dot_dotT_mat = np.transpose(np.asmatrix(ee_dot_dot)) 
 
-        U_1 = np.zeros((3,3)) 
-        U_2 = np.zeros((3,3))
-        U_3 = np.eye(3)
+        # U_1 = np.zeros((3,3)) 
+        # U_2 = np.zeros((3,3))
+        # U_3 = np.eye(3)
 
         # U = np.concatenate( (U_1, U_2, U_3), axis=1 )
         U = np.eye(3)
-
-        # import pdb ; pdb.set_trace() 
 
         UNc_bar_2 = np.linalg.pinv( U @ np.linalg.inv(A) @ np.transpose(U) )
         UNc_bar = np.linalg.pinv(A) @ np.transpose(U) @ UNc_bar_2 
@@ -146,7 +144,7 @@ class ManipulatorInterface(Interface):
         g = self._robot.get_gravity()
         F = M_star @ ( ee_dot_dot + J_star @ U @ np.linalg.inv(A) @ (cf + g) )
 
-        jtrq = np.transpose(J_star) @ F
+        # jtrq = np.transpose(J_star) @ F
 
         # F = np.linalg.pinv(A_mat).dot(ee_dot_dotT_mat) 
         # F = A_mat.dot(ee_dot_dotT_mat) 
@@ -172,8 +170,6 @@ class ManipulatorInterface(Interface):
         # phi = U * Nc * A^-1 * ( U * Nc )' 
         # phi = 
 
-        # import pdb ; pdb.set_trace() 
-
         # nullspace of J1 
         # N1 = np.eye(3) - np.linalg.pinv(ee_J) @ ee_J 
 
@@ -183,21 +179,56 @@ class ManipulatorInterface(Interface):
         # N1 = A_null 
 
         # J1 = np.matrix(ee_J) 
-        J1 = np.matrix( [ [0, 0, 0], [0, 0, 0], ee_J[2,:] ] )
-        # J2 = ee_J[0:2,:]
-        J2 = np.vstack( [ ee_J[0:2,:], [0, 0, 0] ] )
-        N1 = np.eye(3) - np.linalg.pinv(np.transpose(J1)) @ np.transpose(J1)
-        F1 = F 
+        # J1 = np.matrix( [ [0, 0, 0], [0, 0, 0], ee_J[2,:] ] )
+        J1 = np.array([1, 1, 1]) 
+
+        ee = self._robot.get_link_iso('ee') 
+        # theta = ee[3,3] # <-- incorrect 
+        theta = q1 + q2 + q3 
+        ee_dot = self._robot.get_link_vel('ee') 
+        # dtheta = ee_dot[2]  # <-- incorrect 
+        dtheta = q_dot[0] + q_dot[1] + q_dot[2]
+        
+        # control law 
+        ddtheta = - KP * ( theta - 0 ) - KD * ( dtheta - 0 ) 
+
+        # import pdb ; pdb.set_trace() 
+
+        # M1 = np.linalg.inv( J1 @ np.linalg.inv(A) @ np.transpose(J1) ) 
+        M1 = 1/( J1 @ np.linalg.inv(A) @ np.transpose(J1) ) 
+
+        # import pdb ; pdb.set_trace() 
+        # F1 = M1 * ( ddtheta + J1 @ np.linalg.inv(A) @ (cf + g) )
+        F1 = M1 * ddtheta 
 
         T1 = np.dot( np.transpose(J1), F1) 
 
-        # T2 = A.dot(q_dot_dot); 
-        # J21 = np.eye(3) @ N1
-        J21 = J2 @ N1  
-        J21 = np.matrix(J21)
-        M21 = np.linalg.pinv( J21 @ np.linalg.pinv(A) @ np.transpose(J21) ) 
-        F2 = M21 @ np.transpose(np.matrix(q_dot_dot)) 
-        T2 = np.transpose(J21) @ F2  
+        # J2 = ee_J[0:2,:]
+
+        # import pdb ; pdb.set_trace() 
+        # J2 = np.vstack( [ ee_J[0:2,:], [0, 0, 0] ] )
+        # # F1 = F 
+
+        # # T2 = A.dot(q_dot_dot); 
+        # # J21 = np.eye(3) @ N1
+
+
+        # J1_bar = np.linalg.inv(A) @ np.transpose(J1) @ np.linalg.pinv( J1 @ np.linalg.inv(A) @ np.transpose(J1) ) 
+        # N1 = np.eye(3) - J1_bar @ J1 
+        # N1 = np.eye(3) - np.linalg.pinv(J1) @ J1
+
+        # # UNc_bar_2 = np.linalg.pinv( U @ np.linalg.inv(A) @ np.transpose(U) )
+        # # UNc_bar = np.linalg.pinv(A) @ np.transpose(U) @ UNc_bar_2 
+
+
+        # J21 = J2 @ N1  
+        # J21 = np.matrix(J21)
+        # M21 = np.linalg.pinv( J21 @ np.linalg.pinv(A) @ np.transpose(J21) ) 
+        # # F2 = M21 @ np.transpose(np.matrix(q_dot_dot)) 
+        # F2 = F 
+        # T2 = np.transpose(J21) @ F2  
+
+        T2 = 0 
 
         T = T1 + T2
 

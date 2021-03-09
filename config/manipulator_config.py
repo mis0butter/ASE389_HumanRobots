@@ -11,6 +11,9 @@ class ManipulatorConfig(object):
     VIDEO_RECORD = False
     DYN_LIB = "pinocchio"  # "dart"
 
-    DES_EE_POS = np.array([1., 2., 0.])
-    KP = .15
-    KD = .04
+    DES_EE_POS = np.array([0., 0., 0.])
+    # KP = .15
+    # KD = .04
+
+    KP = 25
+    KD = 10
