@@ -1,12 +1,12 @@
 import numpy as np
 
 from util import util
-from config.atlas_config import PnCConfig, WBCConfig
+from config.dog_config import PnCConfig, WBCConfig
 from pnc.wbc.wbc import WBC
 from pnc.wbc.joint_integrator import JointIntegrator
 
 
-class AtlasController(object):
+class dogController(object):
     def __init__(self, tf_container, robot):
         self._tf_container = tf_container
         self._robot = robot

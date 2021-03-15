@@ -1,14 +1,14 @@
 import numpy as np
 
-from config.atlas_config import WBCConfig, PnCConfig
+from config.dog_config import WBCConfig, PnCConfig
 from pnc.task_force_container import TaskForceContainer
 from pnc.wbc.basic_task import BasicTask
 from pnc.wbc.basic_contact import SurfaceContact
 
 
-class AtlasTaskForceContainer(TaskForceContainer):
+class dogTaskForceContainer(TaskForceContainer):
     def __init__(self, robot):
-        super(AtlasTaskForceContainer, self).__init__(robot)
+        super(dogTaskForceContainer, self).__init__(robot)
 
         # ======================================================================
         # Initialize Task

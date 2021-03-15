@@ -2,9 +2,9 @@ import numpy as np
 from scipy.spatial.transform import Rotation as R
 from scipy.spatial.transform import Slerp
 
-from config.atlas_config import WalkingState
+from config.dog_config import WalkingState
 from pnc.state_machine import StateMachine
-from pnc.atlas_pnc.atlas_state_provider import AtlasStateProvider
+from pnc.dog_pnc.dog_state_provider import dogStateProvider
 
 
 class DoubleSupportStand(StateMachine):
@@ -17,7 +17,7 @@ class DoubleSupportStand(StateMachine):
         self._rf_z_max_time = 0.
         self._com_height_des = 0.
         self._start_time = 0.
-        self._sp = AtlasStateProvider()
+        self._sp = dogStateProvider()
 
     @property
     def end_time(self):

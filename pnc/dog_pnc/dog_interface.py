@@ -8,35 +8,35 @@ import copy
 import pybullet as p
 
 from pnc.interface import Interface
-from config.atlas_config import PnCConfig
-from pnc.atlas_pnc.atlas_interrupt_logic import AtlasInterruptLogic
-from pnc.atlas_pnc.atlas_state_provider import AtlasStateProvider
-from pnc.atlas_pnc.atlas_state_estimator import AtlasStateEstimator
-from pnc.atlas_pnc.atlas_control_architecture import AtlasControlArchitecture
+from config.dog_config import PnCConfig
+from pnc.dog_pnc.dog_interrupt_logic import dogInterruptLogic
+from pnc.dog_pnc.dog_state_provider import dogStateProvider
+from pnc.dog_pnc.dog_state_estimator import dogStateEstimator
+from pnc.dog_pnc.dog_control_architecture import dogControlArchitecture
 from pnc.data_saver import DataSaver
 
 
-class AtlasInterface(Interface):
+class dogInterface(Interface):
     def __init__(self):
-        super(AtlasInterface, self).__init__()
+        super(dogInterface, self).__init__()
 
         if PnCConfig.DYN_LIB == "dart":
             from pnc.robot_system.dart_robot_system import DartRobotSystem
             self._robot = DartRobotSystem(
-                cwd + "/robot_model/atlas/atlas_rel_path.urdf", False,
+                cwd + "/robot_model/dog/dog_rel_path.urdf", False,
                 PnCConfig.PRINT_ROBOT_INFO)
         elif PnCConfig.DYN_LIB == "pinocchio":
             from pnc.robot_system.pinocchio_robot_system import PinocchioRobotSystem
             self._robot = PinocchioRobotSystem(
-                cwd + "/robot_model/atlas/atlas.urdf",
-                cwd + "/robot_model/atlas", False, PnCConfig.PRINT_ROBOT_INFO)
+                cwd + "/robot_model/dog/dog.urdf",
+                cwd + "/robot_model/dog", False, PnCConfig.PRINT_ROBOT_INFO)
         else:
             raise ValueError("wrong dynamics library")
 
-        self._sp = AtlasStateProvider(self._robot)
-        self._se = AtlasStateEstimator(self._robot)
-        self._control_architecture = AtlasControlArchitecture(self._robot)
-        self._interrupt_logic = AtlasInterruptLogic(self._control_architecture)
+        self._sp = dogStateProvider(self._robot)
+        self._se = dogStateEstimator(self._robot)
+        self._control_architecture = dogControlArchitecture(self._robot)
+        self._interrupt_logic = dogInterruptLogic(self._control_architecture)
         if PnCConfig.SAVE_DATA:
             self._data_saver = DataSaver()
 

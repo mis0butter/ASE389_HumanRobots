@@ -1,12 +1,12 @@
 import numpy as np
 
 from pnc.interrupt_logic import InterruptLogic
-from config.atlas_config import WalkingState
+from config.dog_config import WalkingState
 
 
-class AtlasInterruptLogic(InterruptLogic):
+class dogInterruptLogic(InterruptLogic):
     def __init__(self, ctrl_arch):
-        super(AtlasInterruptLogic, self).__init__()
+        super(dogInterruptLogic, self).__init__()
         self._control_architecture = ctrl_arch
 
     def process_interrupts(self):

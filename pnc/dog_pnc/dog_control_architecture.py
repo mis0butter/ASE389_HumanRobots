@@ -1,28 +1,28 @@
 import numpy as np
 
-from config.atlas_config import WalkingConfig, WBCConfig, WalkingState
+from config.dog_config import WalkingConfig, WBCConfig, WalkingState
 from pnc.control_architecture import ControlArchitecture
 from pnc.wbc.manager.task_hierarchy_manager import TaskHierarchyManager
 from pnc.wbc.manager.floating_base_trajectory_manager import FloatingBaseTrajectoryManager
 from pnc.wbc.manager.foot_trajectory_manager import FootTrajectoryManager
 from pnc.wbc.manager.reaction_force_manager import ReactionForceManager
 from pnc.wbc.manager.upper_body_trajectory_manager import UpperBodyTrajectoryManager
-from pnc.atlas_pnc.atlas_task_force_container import AtlasTaskForceContainer
-from pnc.atlas_pnc.atlas_controller import AtlasController
-from pnc.atlas_pnc.atlas_state_machine.double_support_stand import DoubleSupportStand
-from pnc.atlas_pnc.atlas_state_machine.double_support_balance import DoubleSupportBalance
-from pnc.atlas_pnc.atlas_state_provider import AtlasStateProvider
+from pnc.dog_pnc.dog_task_force_container import dogTaskForceContainer
+from pnc.dog_pnc.dog_controller import dogController
+from pnc.dog_pnc.dog_state_machine.double_support_stand import DoubleSupportStand
+from pnc.dog_pnc.dog_state_machine.double_support_balance import DoubleSupportBalance
+from pnc.dog_pnc.dog_state_provider import dogStateProvider
 
 
-class AtlasControlArchitecture(ControlArchitecture):
+class dogControlArchitecture(ControlArchitecture):
     def __init__(self, robot):
-        super(AtlasControlArchitecture, self).__init__(robot)
+        super(dogControlArchitecture, self).__init__(robot)
 
         # Initialize Task Force Container
-        self._taf_container = AtlasTaskForceContainer(robot)
+        self._taf_container = dogTaskForceContainer(robot)
 
         # Initialize Controller
-        self._atlas_controller = AtlasController(self._taf_container, robot)
+        self._dog_controller = dogController(self._taf_container, robot)
 
         # Initialize Task Manager
         self._rfoot_tm = FootTrajectoryManager(
@@ -96,7 +96,7 @@ class AtlasControlArchitecture(ControlArchitecture):
         self._prev_state = WalkingState.STAND
         self._b_state_first_visit = True
 
-        self._sp = AtlasStateProvider()
+        self._sp = dogStateProvider()
 
     def get_command(self):
         if self._b_state_first_visit:
@@ -109,7 +109,7 @@ class AtlasControlArchitecture(ControlArchitecture):
         self._upper_body_tm.use_nominal_upper_body_joint_pos(
             self._sp.nominal_joint_pos)
         # Get Whole Body Control Commands
-        command = self._atlas_controller.get_command()
+        command = self._dog_controller.get_command()
 
         if self._state_machine[self._state].end_of_state():
             self._state_machine[self._state].last_visit()

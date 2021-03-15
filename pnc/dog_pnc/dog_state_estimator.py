@@ -1,15 +1,15 @@
 import numpy as np
 
-from config.atlas_config import PnCConfig
+from config.dog_config import PnCConfig
 from util import util
-from pnc.atlas_pnc.atlas_state_provider import AtlasStateProvider
+from pnc.dog_pnc.dog_state_provider import dogStateProvider
 
 
-class AtlasStateEstimator(object):
+class dogStateEstimator(object):
     def __init__(self, robot):
-        super(AtlasStateEstimator, self).__init__()
+        super(dogStateEstimator, self).__init__()
         self._robot = robot
-        self._sp = AtlasStateProvider(self._robot)
+        self._sp = dogStateProvider(self._robot)
 
     def initialize(self, sensor_data):
         self._sp.nominal_joint_pos = sensor_data["joint_pos"]

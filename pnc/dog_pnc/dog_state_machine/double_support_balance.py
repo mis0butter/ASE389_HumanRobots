@@ -1,8 +1,8 @@
 import numpy as np
 
-from config.atlas_config import WalkingState
+from config.dog_config import WalkingState
 from pnc.state_machine import StateMachine
-from pnc.atlas_pnc.atlas_state_provider import AtlasStateProvider
+from pnc.dog_pnc.dog_state_provider import dogStateProvider
 
 
 class DoubleSupportBalance(StateMachine):
@@ -11,7 +11,7 @@ class DoubleSupportBalance(StateMachine):
         self._trajectory_managers = tm
         self._hierarchy_managers = hm
         self._force_managers = fm
-        self._sp = AtlasStateProvider()
+        self._sp = dogStateProvider()
         self._start_time = 0.
         self._b_state_switch_trigger = False
 
