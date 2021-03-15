@@ -1,4 +1,4 @@
-<robot name="spot">
+<robot name="dog">
   <gazebo>
       <static>true</static>
   </gazebo>
