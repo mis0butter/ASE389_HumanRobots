@@ -12,14 +12,16 @@ import pybullet as p
 import numpy as np
 np.set_printoptions(precision=2)
 
-from config.atlas_config import SimConfig
-from pnc.atlas_pnc.atlas_interface import AtlasInterface
+from config.dog_config import SimConfig
+from pnc.dog_pnc.dog_interface import DogInterface
 from util import pybullet_util
 from util import util
 from util import liegroup
 
 
 def set_initial_config(robot, joint_id):
+
+    ## ATLAS STUFF 
     # shoulder_x
     p.resetJointState(robot, joint_id["l_arm_shx"], -np.pi / 4, 0.)
     p.resetJointState(robot, joint_id["r_arm_shx"], np.pi / 4, 0.)
@@ -38,6 +40,26 @@ def set_initial_config(robot, joint_id):
     # ankle
     p.resetJointState(robot, joint_id["l_leg_aky"], -np.pi / 4, 0.)
     p.resetJointState(robot, joint_id["r_leg_aky"], -np.pi / 4, 0.)
+
+    ## DOG STUFF  
+    # hip (pelvis) joints? 
+    # front left 
+    p.resetJointState(robot, joint_id["fl.hx"], 0, 0)   # hip socket? 
+    p.resetJointState(robot, joint_id["fl.hy"], 0, 0)   # hip socket? 
+    p.resetJointState(robot, joint_id["fl.kn"], 0, 0)   # knee 
+    # front right 
+    p.resetJointState(robot, joint_id["fr.hx"], 0, 0)   # hip socket? 
+    p.resetJointState(robot, joint_id["fr.hy"], 0, 0)   # hip socket? 
+    p.resetJointState(robot, joint_id["fr.kn"], 0, 0)   # knee 
+    # hind left 
+    p.resetJointState(robot, joint_id["hl.hx"], 0, 0)   # hip socket? 
+    p.resetJointState(robot, joint_id["hl.hy"], 0, 0)   # hip socket? 
+    p.resetJointState(robot, joint_id["hl.kn"], 0, 0)   # knee 
+    # hind right 
+    p.resetJointState(robot, joint_id["hr.hx"], 0, 0)   # hip socket? 
+    p.resetJointState(robot, joint_id["hr.hy"], 0, 0)   # hip socket? 
+    p.resetJointState(robot, joint_id["hr.kn"], 0, 0)   # knee 
+
 
 
 def signal_handler(signal, frame):
@@ -61,14 +83,14 @@ if __name__ == "__main__":
     p.setPhysicsEngineParameter(fixedTimeStep=SimConfig.CONTROLLER_DT,
                                 numSubSteps=SimConfig.N_SUBSTEP)
     # if SimConfig.VIDEO_RECORD:
-    # video_dir = 'video/atlas_pnc'
+    # video_dir = 'video/dog_pnc'
     # if os.path.exists(video_dir):
     # shutil.rmtree(video_dir)
     # os.makedirs(video_dir)
 
     # Create Robot, Ground
     p.configureDebugVisualizer(p.COV_ENABLE_RENDERING, 0)
-    robot = p.loadURDF(cwd + "/robot_model/atlas/atlas.urdf",
+    robot = p.loadURDF(cwd + "/robot_model/dog/dog.urdf",
                        SimConfig.INITIAL_POS_WORLD_TO_BASEJOINT,
                        SimConfig.INITIAL_QUAT_WORLD_TO_BASEJOINT)
 
@@ -88,7 +110,7 @@ if __name__ == "__main__":
     pybullet_util.set_joint_friction(robot, joint_id, 0)
 
     # Construct Interface
-    interface = AtlasInterface()
+    interface = DogInterface()
 
     # Run Sim
     t = 0
