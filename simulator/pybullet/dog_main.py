@@ -13,7 +13,7 @@ import numpy as np
 np.set_printoptions(precision=2)
 
 from config.dog_config import SimConfig
-from pnc.dog_pnc.dog_interface import DogInterface
+from pnc.dog_pnc.dog_interface import dogInterface
 from util import pybullet_util
 from util import util
 from util import liegroup
@@ -110,7 +110,7 @@ if __name__ == "__main__":
     pybullet_util.set_joint_friction(robot, joint_id, 0)
 
     # Construct Interface
-    interface = DogInterface()
+    interface = dogInterface()
 
     # Run Sim
     t = 0
