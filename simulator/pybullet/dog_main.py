@@ -23,23 +23,23 @@ def set_initial_config(robot, joint_id):
 
     ## ATLAS STUFF 
     # shoulder_x
-    p.resetJointState(robot, joint_id["l_arm_shx"], -np.pi / 4, 0.)
-    p.resetJointState(robot, joint_id["r_arm_shx"], np.pi / 4, 0.)
-    # elbow_y
-    p.resetJointState(robot, joint_id["l_arm_ely"], -np.pi / 2, 0.)
-    p.resetJointState(robot, joint_id["r_arm_ely"], np.pi / 2, 0.)
-    # elbow_x
-    p.resetJointState(robot, joint_id["l_arm_elx"], -np.pi / 2, 0.)
-    p.resetJointState(robot, joint_id["r_arm_elx"], -np.pi / 2, 0.)
-    # hip_y
-    p.resetJointState(robot, joint_id["l_leg_hpy"], -np.pi / 4, 0.)
-    p.resetJointState(robot, joint_id["r_leg_hpy"], -np.pi / 4, 0.)
-    # knee
-    p.resetJointState(robot, joint_id["l_leg_kny"], np.pi / 2, 0.)
-    p.resetJointState(robot, joint_id["r_leg_kny"], np.pi / 2, 0.)
-    # ankle
-    p.resetJointState(robot, joint_id["l_leg_aky"], -np.pi / 4, 0.)
-    p.resetJointState(robot, joint_id["r_leg_aky"], -np.pi / 4, 0.)
+    # p.resetJointState(robot, joint_id["l_arm_shx"], -np.pi / 4, 0.)
+    # p.resetJointState(robot, joint_id["r_arm_shx"], np.pi / 4, 0.)
+    # # elbow_y
+    # p.resetJointState(robot, joint_id["l_arm_ely"], -np.pi / 2, 0.)
+    # p.resetJointState(robot, joint_id["r_arm_ely"], np.pi / 2, 0.)
+    # # elbow_x
+    # p.resetJointState(robot, joint_id["l_arm_elx"], -np.pi / 2, 0.)
+    # p.resetJointState(robot, joint_id["r_arm_elx"], -np.pi / 2, 0.)
+    # # hip_y
+    # p.resetJointState(robot, joint_id["l_leg_hpy"], -np.pi / 4, 0.)
+    # p.resetJointState(robot, joint_id["r_leg_hpy"], -np.pi / 4, 0.)
+    # # knee
+    # p.resetJointState(robot, joint_id["l_leg_kny"], np.pi / 2, 0.)
+    # p.resetJointState(robot, joint_id["r_leg_kny"], np.pi / 2, 0.)
+    # # ankle
+    # p.resetJointState(robot, joint_id["l_leg_aky"], -np.pi / 4, 0.)
+    # p.resetJointState(robot, joint_id["r_leg_aky"], -np.pi / 4, 0.)
 
     ## DOG STUFF  
     # hip (pelvis) joints? 
@@ -127,10 +127,20 @@ if __name__ == "__main__":
                                                     pos_basejoint_to_basecom,
                                                     rot_basejoint_to_basecom)
 
-        rf_height = pybullet_util.get_link_iso(robot, link_id['r_sole'])[2, 3]
-        lf_height = pybullet_util.get_link_iso(robot, link_id['l_sole'])[2, 3]
-        sensor_data['b_rf_contact'] = True if rf_height <= 0.01 else False
-        sensor_data['b_lf_contact'] = True if lf_height <= 0.01 else False
+        ## ATLAST STUFF 
+        # rf_height = pybullet_util.get_link_iso(robot, link_id['r_sole'])[2, 3]
+        # lf_height = pybullet_util.get_link_iso(robot, link_id['l_sole'])[2, 3]
+        # sensor_data['b_rf_contact'] = True if rf_height <= 0.01 else False
+        # sensor_data['b_lf_contact'] = True if lf_height <= 0.01 else False
+
+        ## DOG STUFF 
+        fr_height = pybullet_util.get_link_iso(robot, link_id['fr.sole'])[2, 3]
+        fl_height = pybullet_util.get_link_iso(robot, link_id['fl.sole'])[2, 3]
+        hr_height = pybullet_util.get_link_iso(robot, link_id['hr.sole'])[2, 3]
+        hl_height = pybullet_util.get_link_iso(robot, link_id['hl.sole'])[2, 3]
+
+        import pdb; pdb.set_trace()
+
 
         # Get Keyboard Event
         keys = p.getKeyboardEvents()

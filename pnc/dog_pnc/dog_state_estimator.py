@@ -26,8 +26,10 @@ class dogStateEstimator(object):
             sensor_data["joint_vel"])
 
         # Update Contact Info
-        self._sp.b_rf_contact = sensor_data["b_rf_contact"]
-        self._sp.b_lf_contact = sensor_data["b_lf_contact"]
+        self._sp.b_fr_contact = sensor_data["b_fr_contact"]
+        self._sp.b_fl_contact = sensor_data["b_fl_contact"]
+        self._sp.b_hr_contact = sensor_data["b_hr_contact"]
+        self._sp.b_hl_contact = sensor_data["b_hl_contact"]
 
         # Update Divergent Component of Motion
         self._update_dcm()

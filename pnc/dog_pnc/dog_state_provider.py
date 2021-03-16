@@ -23,8 +23,10 @@ class dogStateProvider(metaclass=MetaSingleton):
         self._dcm = np.zeros(3)
         self._prev_dcm = np.zeros(3)
         self._dcm_vel = np.zeros(3)
-        self._b_rf_contact = True
-        self._b_lf_contact = True
+        self._b_fr_contact = True
+        self._b_fl_contact = True
+        self._b_hr_contact = True
+        self._b_hl_contact = True
 
     @property
     def nominal_joint_pos(self):
