@@ -25,6 +25,8 @@ class dogStateEstimator(object):
             sensor_data["base_joint_ang_vel"], sensor_data["joint_pos"],
             sensor_data["joint_vel"])
 
+        import pdb; pdb.set_trace()
+
         # Update Contact Info
         self._sp.b_fr_contact = sensor_data["b_fr_contact"]
         self._sp.b_fl_contact = sensor_data["b_fl_contact"]

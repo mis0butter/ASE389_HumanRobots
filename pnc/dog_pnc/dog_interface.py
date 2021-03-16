@@ -33,6 +33,8 @@ class dogInterface(Interface):
         else:
             raise ValueError("wrong dynamics library")
 
+        import pdb; pdb.set_trace()
+
         self._sp = dogStateProvider(self._robot)
         self._se = dogStateEstimator(self._robot)
         self._control_architecture = dogControlArchitecture(self._robot)
