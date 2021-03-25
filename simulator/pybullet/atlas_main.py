@@ -110,6 +110,8 @@ if __name__ == "__main__":
         sensor_data['b_rf_contact'] = True if rf_height <= 0.01 else False
         sensor_data['b_lf_contact'] = True if lf_height <= 0.01 else False
 
+        import pdb; pdb.set_trace()
+
         # Get Keyboard Event
         keys = p.getKeyboardEvents()
         if pybullet_util.is_key_triggered(keys, '8'):

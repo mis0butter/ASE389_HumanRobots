@@ -138,6 +138,10 @@ if __name__ == "__main__":
         fl_height = pybullet_util.get_link_iso(robot, link_id['fl.sole'])[2, 3]
         hr_height = pybullet_util.get_link_iso(robot, link_id['hr.sole'])[2, 3]
         hl_height = pybullet_util.get_link_iso(robot, link_id['hl.sole'])[2, 3]
+        sensor_data['b_fr_contact'] = True if fr_height <= 0.01 else False
+        sensor_data['b_fl_contact'] = True if fl_height <= 0.01 else False
+        sensor_data['b_hr_contact'] = True if hr_height <= 0.01 else False
+        sensor_data['b_hl_contact'] = True if hl_height <= 0.01 else False
 
         import pdb; pdb.set_trace()
 

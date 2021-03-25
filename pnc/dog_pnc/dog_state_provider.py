@@ -85,18 +85,54 @@ class dogStateProvider(metaclass=MetaSingleton):
     def curr_time(self, val):
         self._curr_time = val
 
-    @property
-    def b_rf_contact(self):
-        return self._b_rf_contact
+    # added for dog 
 
-    @b_rf_contact.setter
-    def b_rf_contact(self, value):
-        self._b_rf_contact = value
+    @property 
+    def b_fr_contact(self): 
+        return self._b_fr_contact 
 
-    @property
-    def b_lf_contact(self):
-        return self._b_lf_contact
+    @b_fr_contact.setter
+    def b_fr_contact(self, value):
+        self._b_fr_contact = value
 
-    @b_lf_contact.setter
-    def b_lf_contact(self, value):
-        self._b_lf_contact = value
+    @property 
+    def b_fl_contact(self): 
+        return self._b_fl_contact
+
+    @b_fl_contact.setter
+    def b_fl_contact(self, value):
+        self._b_fl_contact = value
+
+    @property 
+    def b_hr_contact(self): 
+        return self._b_hr_contact
+
+    @b_hr_contact.setter
+    def b_hr_contact(self, value):
+        self._b_hr_contact = value
+
+    @property 
+    def b_hl_contact(self): 
+        return self._b_hl_contact   
+
+    @b_hl_contact.setter
+    def b_hl_contact(self, value):
+        self._b_hl_contact = value
+
+# comment below out 
+
+    # @property
+    # def b_rf_contact(self):
+    #     return self._b_rf_contact
+
+    # @b_rf_contact.setter
+    # def b_rf_contact(self, value):
+    #     self._b_rf_contact = value
+
+    # @property
+    # def b_lf_contact(self):
+    #     return self._b_lf_contact
+
+    # @b_lf_contact.setter
+    # def b_lf_contact(self, value):
+    #     self._b_lf_contact = value
