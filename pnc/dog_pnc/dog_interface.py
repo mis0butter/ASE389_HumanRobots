@@ -55,11 +55,15 @@ class dogInterface(Interface):
             self._se.initialize(sensor_data)
         self._se.update(sensor_data)
 
+        import pdb; pdb.set_trace()
+
         # Process Interrupt Logic
         self._interrupt_logic.process_interrupts()
 
         # Compute Cmd
         command = self._control_architecture.get_command()
+
+        import pdb; pdb.set_trace()
 
         if PnCConfig.SAVE_DATA and (self._count % PnCConfig.SAVE_FREQ == 0):
             self._data_saver.advance()

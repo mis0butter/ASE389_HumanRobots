@@ -44,19 +44,19 @@ def set_initial_config(robot, joint_id):
     ## DOG STUFF  
     # hip (pelvis) joints? 
     # front left 
-    p.resetJointState(robot, joint_id["fl.hx"], 0, 0)   # hip socket? 
+    p.resetJointState(robot, joint_id["fl.hx"], -np.pi/2, 0)   # hip socket? 
     p.resetJointState(robot, joint_id["fl.hy"], 0, 0)   # hip socket? 
     p.resetJointState(robot, joint_id["fl.kn"], 0, 0)   # knee 
     # front right 
-    p.resetJointState(robot, joint_id["fr.hx"], 0, 0)   # hip socket? 
+    p.resetJointState(robot, joint_id["fr.hx"], -np.pi/2, 0)   # hip socket? 
     p.resetJointState(robot, joint_id["fr.hy"], 0, 0)   # hip socket? 
     p.resetJointState(robot, joint_id["fr.kn"], 0, 0)   # knee 
     # hind left 
-    p.resetJointState(robot, joint_id["hl.hx"], 0, 0)   # hip socket? 
+    p.resetJointState(robot, joint_id["hl.hx"], -np.pi/2, 0)   # hip socket? 
     p.resetJointState(robot, joint_id["hl.hy"], 0, 0)   # hip socket? 
     p.resetJointState(robot, joint_id["hl.kn"], 0, 0)   # knee 
     # hind right 
-    p.resetJointState(robot, joint_id["hr.hx"], 0, 0)   # hip socket? 
+    p.resetJointState(robot, joint_id["hr.hx"], -np.pi/2, 0)   # hip socket? 
     p.resetJointState(robot, joint_id["hr.hy"], 0, 0)   # hip socket? 
     p.resetJointState(robot, joint_id["hr.kn"], 0, 0)   # knee 
 
@@ -163,10 +163,14 @@ if __name__ == "__main__":
         elif pybullet_util.is_key_triggered(keys, '9'):
             interface.interrupt_logic.b_interrupt_button_nine = True
 
+        import pdb; pdb.set_trace()
+
         # Compute Command
         if SimConfig.PRINT_TIME:
             start_time = time.time()
         command = interface.get_command(copy.deepcopy(sensor_data))
+
+        import pdb; pdb.set_trace()
 
         if SimConfig.PRINT_TIME:
             end_time = time.time()
@@ -175,7 +179,11 @@ if __name__ == "__main__":
         # Apply Trq
         pybullet_util.set_motor_trq(robot, joint_id, command)
 
+        import pdb; pdb.set_trace()
+
         p.stepSimulation()
+
+        import pdb; pdb.set_trace()
 
         # time.sleep(dt)
         t += dt

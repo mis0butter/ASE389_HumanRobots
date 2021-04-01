@@ -103,6 +103,8 @@ class dogControlArchitecture(ControlArchitecture):
             self._state_machine[self._state].first_visit()
             self._b_state_first_visit = False
 
+        import pdb; pdb.set_trace()
+
         # Update State Machine
         self._state_machine[self._state].one_step()
         # Update State Machine Independent Trajectories
@@ -110,6 +112,8 @@ class dogControlArchitecture(ControlArchitecture):
             self._sp.nominal_joint_pos)
         # Get Whole Body Control Commands
         command = self._dog_controller.get_command()
+
+        import pdb; pdb.set_trace()
 
         if self._state_machine[self._state].end_of_state():
             self._state_machine[self._state].last_visit()
