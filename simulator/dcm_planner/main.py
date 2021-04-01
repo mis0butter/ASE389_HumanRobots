@@ -85,45 +85,90 @@ def save_trajectory(lf_stance, rf_stance, footstep_list, dcm_planner):
 ## Main
 ## =============================================================================
 
-initial_dcm = np.array([0., 0., 0.765])
+# 1 = forward, 0 = backwards 
+walk = 0 
 
-dcm_planner = DCMPlanner()
-dcm_planner.t_transfer = 0.
-dcm_planner.t_ds = 0.45
-dcm_planner.t_ss = 0.75
-dcm_planner.percentage_settle = 0.9
-dcm_planner.alpha_ds = 0.5
-dcm_planner.robot_mass = 100.
-dcm_planner.z_vrp = 0.765
+if walk == 1: 
+    initial_dcm = np.array([0., 0., 0.765])
 
-lf_stance = Footstep()
-lf_stance.pos = np.array([0., 0.11, 0.])
-lf_stance.quat = np.array([0., 0., 0., 1.])
-lf_stance.side = Footstep.LEFT_SIDE
+    dcm_planner = DCMPlanner()
+    dcm_planner.t_transfer = 0.
+    dcm_planner.t_ds = 0.45
+    dcm_planner.t_ss = 0.75
+    dcm_planner.percentage_settle = 0.9
+    dcm_planner.alpha_ds = 0.5
+    dcm_planner.robot_mass = 100.
+    dcm_planner.z_vrp = 0.765
 
-rf_stance = Footstep()
-rf_stance.pos = np.array([0., -0.11, 0.])
-rf_stance.quat = np.array([0., 0., 0., 1.])
-rf_stance.side = Footstep.RIGHT_SIDE
+    lf_stance = Footstep()
+    lf_stance.pos = np.array([0., 0.11, 0.])
+    lf_stance.quat = np.array([0., 0., 0., 1.])
+    lf_stance.side = Footstep.LEFT_SIDE
 
-first_step = Footstep()
-first_step.pos = np.array([0.15, 0.11, 0.])
-first_step.quat = np.array([0., 0., 0., 1.])
-first_step.side = Footstep.LEFT_SIDE
+    rf_stance = Footstep()
+    rf_stance.pos = np.array([0., -0.11, 0.])
+    rf_stance.quat = np.array([0., 0., 0., 1.])
+    rf_stance.side = Footstep.RIGHT_SIDE
 
-second_step = Footstep()
-second_step.pos = np.array([0.30, -0.11, 0.])
-second_step.quat = np.array([0., 0., 0., 1.])
-second_step.side = Footstep.RIGHT_SIDE
+    first_step = Footstep()
+    first_step.pos = np.array([0.15, 0.11, 0.])
+    first_step.quat = np.array([0., 0., 0., 1.])
+    first_step.side = Footstep.LEFT_SIDE
 
-third_step = Footstep()
-third_step.pos = np.array([0.30, 0.11, 0.])
-third_step.quat = np.array([0., 0., 0., 1.])
-third_step.side = Footstep.LEFT_SIDE
+    second_step = Footstep()
+    second_step.pos = np.array([0.30, -0.11, 0.])
+    second_step.quat = np.array([0., 0., 0., 1.])
+    second_step.side = Footstep.RIGHT_SIDE
 
+    third_step = Footstep()
+    third_step.pos = np.array([0.30, 0.11, 0.])
+    third_step.quat = np.array([0., 0., 0., 1.])
+    third_step.side = Footstep.LEFT_SIDE
+
+else: 
+    initial_dcm = np.array([0.30, 0., 0.765])
+
+    dcm_planner = DCMPlanner()
+    dcm_planner.t_transfer = 0.
+    dcm_planner.t_ds = 0.45
+    dcm_planner.t_ss = 0.75
+    dcm_planner.percentage_settle = 0.9
+    dcm_planner.alpha_ds = 0.5
+    dcm_planner.robot_mass = 100.
+    dcm_planner.z_vrp = 0.765
+
+    lf_stance = Footstep()
+    lf_stance.pos = np.array([0.30, 0.11, 0.])
+    lf_stance.quat = np.array([0., 0., 0., 1.])
+    lf_stance.side = Footstep.LEFT_SIDE
+
+    rf_stance = Footstep()
+    rf_stance.pos = np.array([0.30, -0.11, 0.])
+    rf_stance.quat = np.array([0., 0., 0., 1.])
+    rf_stance.side = Footstep.RIGHT_SIDE
+
+    first_step = Footstep()
+    first_step.pos = np.array([0.15, 0.11, 0.])
+    first_step.quat = np.array([0., 0., 0., 1.])
+    first_step.side = Footstep.LEFT_SIDE
+
+    second_step = Footstep()
+    second_step.pos = np.array([0., -0.11, 0.])
+    second_step.quat = np.array([0., 0., 0., 1.])
+    second_step.side = Footstep.RIGHT_SIDE
+
+    third_step = Footstep()
+    third_step.pos = np.array([0., 0.11, 0.])
+    third_step.quat = np.array([0., 0., 0., 1.])
+    third_step.side = Footstep.LEFT_SIDE
+
+
+# walking  
 input_footstep_list = [first_step, second_step, third_step]
 
 dcm_planner.initialize(input_footstep_list, lf_stance, rf_stance, initial_dcm,
                        np.zeros(3))
+
+
 
 save_trajectory(lf_stance, rf_stance, input_footstep_list, dcm_planner)
