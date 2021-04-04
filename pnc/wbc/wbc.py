@@ -114,15 +114,15 @@ class WBC(object):
             j = task.jacobian
             j_dot_q_dot = task.jacobian_dot_q_dot
             x_ddot = task.op_cmd
-            w = self._w_hierarchy[i]
             if verbose:
                 print(i, " th task")
                 task.debug()
 
-            ## TODO : Iterate through all tasks and construct cost_t_mat, cost_t_vec
-            __import__('ipdb').set_trace()
-
-        cost_t_mat += self._lambda_q_ddot * self._mass_matrix  ## qddot regularization
+            cost_t_mat += self._w_hierarchy[i] * np.dot(j.transpose(), j)
+            cost_t_vec += self._w_hierarchy[i] * np.dot(
+                (j_dot_q_dot - x_ddot).transpose(), j)
+        # cost_t_mat += self._lambda_q_ddot * np.eye(self._n_q_dot)
+        cost_t_mat += self._lambda_q_ddot * self._mass_matrix
 
         if contact_list is not None:
             uf_mat = np.array(
@@ -165,16 +165,13 @@ class WBC(object):
         # ======================================================================
 
         if contact_list is not None:
-            # TODO : Construct floating base dynamics constraint matrix
-            __import__('ipdb').set_trace()
-            eq_mat = np.zeros(
-                (6, contact_jacobian.transpose().shape[1] + self._n_q_dot))
-
+            eq_mat = np.concatenate(
+                (np.dot(self._sf, self._mass_matrix),
+                 -np.dot(self._sf, contact_jacobian.transpose())),
+                axis=1)  # (6, nqdot+nc)
         else:
             eq_mat = np.dot(self._sf, self._mass_matrix)
-        # TODO : Construct floating base dynamics constraint vector
-        __import__('ipdb').set_trace()
-        eq_vec = np.zeros(6)
+        eq_vec = -np.dot(self._sf, (self._coriolis + self._gravity))
 
         # ======================================================================
         # Inequality Constraint

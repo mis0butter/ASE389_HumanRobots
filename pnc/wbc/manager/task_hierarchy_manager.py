@@ -24,13 +24,49 @@ class TaskHierarchyManager(object):
     def update_ramp_to_min(self, current_time):
         t = np.clip(current_time, self._start_time,
                     self._start_time + self._duration)
-        self._task.w_hierarchy = (self._w_min -
-                                  self._w_starting) / self._duration * (
-                                      t - self._start_time) + self._w_starting
+        """
+        Problem #5
+        ----------
+        Set proper value for self._task.w_hierarchy. You would lienarly
+        interpolate the value such that the weight is self._w_starting at
+        self._start_time, and the weight is self._w_min at self._start_time +
+        self._duration.
+
+        Parameters to set
+        -----------------
+        self._task._w_hierarchy : Task weight needs to be set
+
+        Parameters to use
+        -----------------
+        self._start_time : Interpolation start time
+        self._w_starting : Initial time weight at self._start_time
+        self._duration : Interpolation duration
+        self._w_min : Final time weight at self._start_time + self._duration
+
+        """
+        self._task.w_hierarchy = 0.
 
     def update_ramp_to_max(self, current_time):
         t = np.clip(current_time, self._start_time,
                     self._start_time + self._duration)
-        self._task.w_hierarchy = (self._w_max -
-                                  self._w_starting) / self._duration * (
-                                      t - self._start_time) + self._w_starting
+        """
+        Problem #6
+        ----------
+        Set proper value for self._task.w_hierarchy. You would lienarly
+        interpolate the value such that the weight is self._w_starting at
+        self._start_time, and the weight is self._w_max at self._start_time +
+        self._duration.
+
+        Parameters to set
+        -----------------
+        self._task._w_hierarchy : Task weight needs to be set
+
+        Parameters to use
+        -----------------
+        self._start_time : Interpolation start time
+        self._w_starting : Initial time weight at self._start_time
+        self._duration : Interpolation duration
+        self._w_max : Final time weight at self._start_time + self._duration
+
+        """
+        self._task.w_hierarchy = 0.

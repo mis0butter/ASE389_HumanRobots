@@ -2,6 +2,9 @@ import numpy as np
 
 from config.atlas_config import WalkingConfig, WBCConfig, WalkingState
 from pnc.control_architecture import ControlArchitecture
+from pnc.planner.locomotion.dcm_planner.dcm_planner import DCMPlanner
+from pnc.planner.locomotion.dcm_planner.footstep import Footstep
+from pnc.wbc.manager.dcm_trajectory_manager import DCMTrajectoryManager
 from pnc.wbc.manager.task_hierarchy_manager import TaskHierarchyManager
 from pnc.wbc.manager.floating_base_trajectory_manager import FloatingBaseTrajectoryManager
 from pnc.wbc.manager.foot_trajectory_manager import FootTrajectoryManager
@@ -11,6 +14,9 @@ from pnc.atlas_pnc.atlas_task_force_container import AtlasTaskForceContainer
 from pnc.atlas_pnc.atlas_controller import AtlasController
 from pnc.atlas_pnc.atlas_state_machine.double_support_stand import DoubleSupportStand
 from pnc.atlas_pnc.atlas_state_machine.double_support_balance import DoubleSupportBalance
+from pnc.atlas_pnc.atlas_state_machine.contact_transition_start import ContactTransitionStart
+from pnc.atlas_pnc.atlas_state_machine.contact_transition_end import ContactTransitionEnd
+from pnc.atlas_pnc.atlas_state_machine.single_support_swing import SingleSupportSwing
 from pnc.atlas_pnc.atlas_state_provider import AtlasStateProvider
 
 
@@ -24,7 +30,10 @@ class AtlasControlArchitecture(ControlArchitecture):
         # Initialize Controller
         self._atlas_controller = AtlasController(self._taf_container, robot)
 
-        # Initialize Task Manager
+        # Initialize Planner
+        self._dcm_planner = DCMPlanner()
+
+        # In___itialize Task Manager
         self._rfoot_tm = FootTrajectoryManager(
             self._taf_container.rfoot_pos_task,
             self._taf_container.rfoot_ori_task, robot)
@@ -39,11 +48,28 @@ class AtlasControlArchitecture(ControlArchitecture):
             self._taf_container.com_task, self._taf_container.pelvis_ori_task,
             robot)
 
+        self._dcm_tm = DCMTrajectoryManager(
+            self._dcm_planner, self._taf_container.com_task,
+            self._taf_container.pelvis_ori_task, self._robot, "l_sole",
+            "r_sole")
+        self._dcm_tm.nominal_com_height = WalkingConfig.COM_HEIGHT
+        self._dcm_tm.t_additional_init_transfer = WalkingConfig.T_ADDITIONAL_INI_TRANS
+        self._dcm_tm.t_contact_transition = WalkingConfig.T_CONTACT_TRANS
+        self._dcm_tm.t_swing = WalkingConfig.T_SWING
+        self._dcm_tm.percentage_settle = WalkingConfig.PERCENTAGE_SETTLE
+        self._dcm_tm.alpha_ds = WalkingConfig.ALPHA_DS
+        self._dcm_tm.nominal_footwidth = WalkingConfig.NOMINAL_FOOTWIDTH
+        self._dcm_tm.nominal_forward_step = WalkingConfig.NOMINAL_FORWARD_STEP
+        self._dcm_tm.nominal_backward_step = WalkingConfig.NOMINAL_BACKWARD_STEP
+        self._dcm_tm.nominal_turn_radians = WalkingConfig.NOMINAL_TURN_RADIANS
+        self._dcm_tm.nominal_strafe_distance = WalkingConfig.NOMINAL_STRAFE_DISTANCE
+
         self._trajectory_managers = {
             "rfoot": self._rfoot_tm,
             "lfoot": self._lfoot_tm,
             "upper_body": self._upper_body_tm,
-            "floating_base": self._floating_base_tm
+            "floating_base": self._floating_base_tm,
+            "dcm": self._dcm_tm
         }
 
         # Initialize Hierarchy Manager
@@ -91,6 +117,34 @@ class AtlasControlArchitecture(ControlArchitecture):
             WalkingState.BALANCE, self._trajectory_managers,
             self._hierarchy_managers, self._reaction_force_managers, robot)
 
+        self._state_machine[
+            WalkingState.LF_CONTACT_TRANS_START] = ContactTransitionStart(
+                WalkingState.LF_CONTACT_TRANS_START, self._trajectory_managers,
+                self._hierarchy_managers, self._reaction_force_managers,
+                Footstep.LEFT_SIDE, self._robot)
+        self._state_machine[
+            WalkingState.LF_CONTACT_TRANS_END] = ContactTransitionEnd(
+                WalkingState.LF_CONTACT_TRANS_END, self._trajectory_managers,
+                self._hierarchy_managers, self._reaction_force_managers,
+                Footstep.LEFT_SIDE, self._robot)
+        self._state_machine[WalkingState.LF_SWING] = SingleSupportSwing(
+            WalkingState.LF_SWING, self._trajectory_managers,
+            Footstep.LEFT_SIDE, self._robot)
+
+        self._state_machine[
+            WalkingState.RF_CONTACT_TRANS_START] = ContactTransitionStart(
+                WalkingState.RF_CONTACT_TRANS_START, self._trajectory_managers,
+                self._hierarchy_managers, self._reaction_force_managers,
+                Footstep.RIGHT_SIDE, self._robot)
+        self._state_machine[
+            WalkingState.RF_CONTACT_TRANS_END] = ContactTransitionEnd(
+                WalkingState.RF_CONTACT_TRANS_END, self._trajectory_managers,
+                self._hierarchy_managers, self._reaction_force_managers,
+                Footstep.RIGHT_SIDE, self._robot)
+        self._state_machine[WalkingState.RF_SWING] = SingleSupportSwing(
+            WalkingState.RF_SWING, self._trajectory_managers,
+            Footstep.RIGHT_SIDE, self._robot)
+
         # Set Starting State
         self._state = WalkingState.STAND
         self._prev_state = WalkingState.STAND
@@ -118,6 +172,10 @@ class AtlasControlArchitecture(ControlArchitecture):
             self._b_state_first_visit = True
 
         return command
+
+    @property
+    def dcm_tm(self):
+        return self._dcm_tm
 
     @property
     def state_machine(self):

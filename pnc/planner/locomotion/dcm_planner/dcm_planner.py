@@ -3,6 +3,7 @@ import copy
 import numpy as np
 
 from util import util
+from util import interpolation
 from pnc.planner.locomotion.dcm_planner.footstep import Footstep, interpolate
 
 
@@ -240,18 +241,21 @@ class DCMPlanner(object):
                 mid_foot_stance = interpolate(stance_step, target_step, 0.5)
                 # Create the hermite quaternion curve object
                 self._base_quat_curves.append(
-                    util.HermiteCurveQuat(curr_base_quat, np.zeros(3),
-                                          mid_foot_stance.quat, np.zeros(3)))
+                    interpolation.HermiteCurveQuat(curr_base_quat, np.zeros(3),
+                                                   mid_foot_stance.quat,
+                                                   np.zeros(3)))
                 # Update the base orientation
                 curr_base_quat = np.copy(mid_foot_stance.quat)
                 step_counter += 1
             else:
+                # TODO : Initiate angular velocity with curr angular velocity
                 mid_foot_stance = interpolate(prev_lf_stance, prev_rf_stance,
                                               0.5)
                 curr_base_quat = mid_foot_stance.quat
                 self._base_quat_curves.append(
-                    util.HermiteCurveQuat(curr_base_quat, np.zeros(3),
-                                          curr_base_quat, np.zeros(3)))
+                    interpolation.HermiteCurveQuat(curr_base_quat,
+                                                   np.zeros(3), curr_base_quat,
+                                                   np.zeros(3)))
 
     def _compute_reference_com_trajectory(self):
         self._compute_total_trajectory_time()
@@ -264,7 +268,7 @@ class DCMPlanner(object):
         self._ref_com_vel = [None] * (n_local + 1)
 
         com_pos = np.copy(self._vrp_list[0])
-        com_vel = np.zeros(3)
+        com_vel = np.zeros(3)  # TODO: Initialize this from initial com vel
         dcm_cur = np.zeros(3)
 
         for i in range(n_local + 1):
@@ -427,23 +431,20 @@ class DCMPlanner(object):
     def _compute_dcm_ini_ds(self, step_idx, t_ds_ini):
         if step_idx == 0:
             return self._ini_dcm_pos
-        ## TODO
-        dcm_ini_ds = np.zeros(3)
-        return dcm_ini_ds
+        return self._vrp_list[step_idx - 1] + np.exp(-t_ds_ini / self._b) * (
+            self._dcm_ini_list[step_idx] - self._vrp_list[step_idx - 1])
 
     def _compute_dcm_vel_ini_ds(self, step_idx, t_ds_ini):
         if step_idx == 0:
             return self._ini_dcm_vel
-        ## TODO
-        dcm_vel_ini_ds = np.zeros(3)
-        return dcm_vel_ini_ds
+        return (1.0 / self._b) * np.exp(-t_ds_ini / self._b) * (
+            self._dcm_ini_list[step_idx] - self._vrp_list[step_idx - 1])
 
     def _compute_dcm_acc_ini_ds(self, step_idx, t_ds_ini):
         if step_idx == 0:
             return np.zeros(3)
-        dcm_acc_ini_ds = (1.0 / self._b**2) * np.exp(-t_ds_ini / self._b) * (
+        return (1.0 / self._b**2) * np.exp(-t_ds_ini / self._b) * (
             self._dcm_ini_list[step_idx] - self._vrp_list[step_idx - 1])
-        return dcm_acc_ini_ds
 
     def _compute_dcm_end_ds(self, step_idx, t_ds_end):
         if step_idx == len(self._vrp_list) - 1:
@@ -451,9 +452,8 @@ class DCMPlanner(object):
         elif step_idx == 0:
             return self._dcm_end_ds_list[step_idx + 1]
         else:
-            ## TODO
-            dcm_end_ds = np.zeros(3)
-            return dcm_end_ds
+            return self._vrp_list[step_idx] + np.exp(t_ds_end / self._b) * (
+                self._dcm_ini_list[step_idx] - self._vrp_list[step_idx])
 
     def _compute_dcm_vel_end_ds(self, step_idx, t_ds_end):
         if step_idx == len(self._vrp_list) - 1:
@@ -461,9 +461,8 @@ class DCMPlanner(object):
         elif step_idx == 0:
             return self._dcm_vel_end_ds_list[step_idx + 1]
         else:
-            ## TODO
-            dcm_vel_end_ds = np.zeros(3)
-            return dcm_vel_end_ds
+            return (1.0 / self._b) * np.exp(t_ds_end / self._b) * (
+                self._dcm_ini_list[step_idx] - self._vrp_list[step_idx])
 
     def _compute_dcm_acc_end_ds(self, step_idx, t_ds_end):
         if step_idx == len(self._vrp_list) - 1:
@@ -471,10 +470,8 @@ class DCMPlanner(object):
         elif step_idx == 0:
             return self._dcm_acc_end_ds_list[step_idx + 1]
         else:
-            dcm_acc_end_ds = (1.0 / self._b**2) * np.exp(
-                t_ds_end / self._b) * (self._dcm_ini_list[step_idx] -
-                                       self._vrp_list[step_idx])
-            return dcm_acc_end_des
+            return (1.0 / self._b**2) * np.exp(t_ds_end / self._b) * (
+                self._dcm_ini_list[step_idx] - self._vrp_list[step_idx])
 
     def _compute_t_step(self, step_idx):
         if self._vrp_type_list[step_idx] == VRPType.TRANSFER:
@@ -489,9 +486,7 @@ class DCMPlanner(object):
             raise ValueError("vrp type is not set properly")
 
     def _compute_dcm_ini(self, vrp_d_i, t_step, dcm_eos_i):
-        ## TODO
-        dcm_ini = np.zeros(3)
-        return dcm_ini
+        return vrp_d_i + np.exp(-t_step / self._b) * (dcm_eos_i - vrp_d_i)
 
     @property
     def t_transfer(self):
