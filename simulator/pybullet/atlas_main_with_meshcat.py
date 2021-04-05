@@ -19,6 +19,8 @@ from pnc.atlas_pnc.atlas_interface import AtlasInterface
 from util import pybullet_util
 from util import util
 from util import liegroup
+from pynput import keyboard
+from pynput.keyboard import Listener
 
 
 def set_initial_config(robot, joint_id):
@@ -115,6 +117,36 @@ if __name__ == "__main__":
 
     time.sleep(1)
 
+    def on_press(key):  # The function that's called when a key is pressed
+        if hasattr(key, 'char'):
+            if key.char == '8':
+                print("8 is pressed")
+                interface.interrupt_logic.b_interrupt_button_eight = True
+            elif key.char == '5':
+                print("5 is pressed")
+                interface.interrupt_logic.b_interrupt_button_five = True
+            elif key.char == '4':
+                print("4 is pressed")
+                interface.interrupt_logic.b_interrupt_button_four = True
+            elif key.char == '2':
+                print("2 is pressed")
+                interface.interrupt_logic.b_interrupt_button_two = True
+            elif key.char == '6':
+                print("6 is pressed")
+                interface.interrupt_logic.b_interrupt_button_six = True
+            elif key.char == '7':
+                print("7 is pressed")
+                interface.interrupt_logic.b_interrupt_button_seven = True
+            elif key.char == '9':
+                print("9 is pressed")
+                interface.interrupt_logic.b_interrupt_button_nine = True
+
+    def on_release(key):  # The function that's called when a key is released
+        pass
+
+    listener = keyboard.Listener(on_press=on_press, on_release=on_release)
+    listener.start()
+
     while (1):
 
         # Get SensorData
@@ -129,23 +161,6 @@ if __name__ == "__main__":
         lf_height = pybullet_util.get_link_iso(robot, link_id['l_sole'])[2, 3]
         sensor_data['b_rf_contact'] = True if rf_height <= 0.01 else False
         sensor_data['b_lf_contact'] = True if lf_height <= 0.01 else False
-
-        # Get Keyboard Event
-        keys = p.getKeyboardEvents()
-        if pybullet_util.is_key_triggered(keys, '8'):
-            interface.interrupt_logic.b_interrupt_button_eight = True
-        elif pybullet_util.is_key_triggered(keys, '5'):
-            interface.interrupt_logic.b_interrupt_button_five = True
-        elif pybullet_util.is_key_triggered(keys, '4'):
-            interface.interrupt_logic.b_interrupt_button_four = True
-        elif pybullet_util.is_key_triggered(keys, '2'):
-            interface.interrupt_logic.b_interrupt_button_two = True
-        elif pybullet_util.is_key_triggered(keys, '6'):
-            interface.interrupt_logic.b_interrupt_button_six = True
-        elif pybullet_util.is_key_triggered(keys, '7'):
-            interface.interrupt_logic.b_interrupt_button_seven = True
-        elif pybullet_util.is_key_triggered(keys, '9'):
-            interface.interrupt_logic.b_interrupt_button_nine = True
 
         # Compute Command
         if SimConfig.PRINT_TIME:
