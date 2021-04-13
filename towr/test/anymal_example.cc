@@ -49,14 +49,14 @@ int main()
   // terrain
   formulation.terrain_ = std::make_shared<FlatGround>(0.0);
 
-  // Kinematic limits and dynamic parameters of the hopper
-  formulation.model_ = RobotModel(RobotModel::Monoped);
+  // Kinematic limits and dynamic parameters of Anymal
+  formulation.model_ = RobotModel(RobotModel::Anymal);
 
-  // set the initial position of the hopper
+  // set the initial position of Anymal
   formulation.initial_base_.lin.at(kPos).z() = 0.5;
   formulation.initial_ee_W_.push_back(Eigen::Vector3d::Zero());
 
-  // define the desired goal state of the hopper
+  // define the desired goal state of Anymal
   formulation.final_base_.lin.at(towr::kPos) << 1.0, 0.0, 0.5;
 
   // Parameters that define the motion. See c'tor for default values or
@@ -66,7 +66,13 @@ int main()
   // alternating stance and swing:     ____-----_____-----_____-----
   
   // TO-DO! Add 3 more legs 
-  formulation.params_.ee_phase_durations_.push_back({0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.2});
+  formulation.params_.ee_phase_durations_.push_back({0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.2}); 
+  formulation.params_.ee_phase_durations_.push_back({0, 0, 0, 0, 0, 0, 0});
+  formulation.params_.ee_phase_durations_.push_back({0, 0, 0, 0, 0, 0, 0});
+  formulation.params_.ee_phase_durations_.push_back({0, 0, 0, 0, 0, 0, 0});
+  formulation.params_.ee_in_contact_at_start_.push_back(true);
+  formulation.params_.ee_in_contact_at_start_.push_back(true);
+  formulation.params_.ee_in_contact_at_start_.push_back(true);
   formulation.params_.ee_in_contact_at_start_.push_back(true);
 
   // Initialize the nonlinear-programming problem with the variables,

@@ -1,0 +1,29 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "",
+        "limitSymbolsToIncludedHeaders": true
+      },
+      "includePath": [
+        "/home/junette/catkin_ws/devel_isolated/turtlebot3_example/include/**",
+        "/home/junette/catkin_ws/devel_isolated/turtlebot3_msgs/include/**",
+        "/home/junette/catkin_ws/devel_isolated/towr_ros/include/**",
+        "/home/junette/catkin_ws/devel_isolated/towr/include/**",
+        "/home/junette/catkin_ws/devel_isolated/spot_msgs/include/**",
+        "/home/junette/catkin_ws/devel_isolated/ifopt/include/**",
+        "/home/junette/catkin_ws/devel/include/**",
+        "/opt/ros/melodic/include/**",
+        "/home/junette/catkin_ws/src/r2d2/include/**",
+        "/home/junette/catkin_ws/src/towr/towr/include/**",
+        "/home/junette/catkin_ws/src/towr/towr_ros/include/**",
+        "/home/junette/catkin_ws/src/turtlebot3_simulations/turtlebot3_fake/include/**",
+        "/home/junette/catkin_ws/src/turtlebot3_simulations/turtlebot3_gazebo/include/**",
+        "/home/junette/catkin_ws/src/turtlebot3/turtlebot3_slam/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS"
+    }
+  ],
+  "version": 4
+}
