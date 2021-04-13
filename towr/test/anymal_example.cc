@@ -54,7 +54,13 @@ int main()
 
   // set the initial position of Anymal
   formulation.initial_base_.lin.at(kPos).z() = 0.5;
-  formulation.initial_ee_W_.push_back(Eigen::Vector3d::Zero());
+    const double x_nominal_b = 0.34;
+    const double y_nominal_b = 0.19;
+    const double z_nominal_b = -0.42;
+  formulation.initial_ee_W_.push_back({x_nominal_b, y_nominal_b, z_nominal_b});
+  formulation.initial_ee_W_.push_back({x_nominal_b, -y_nominal_b, z_nominal_b});
+  formulation.initial_ee_W_.push_back({-x_nominal_b, y_nominal_b, z_nominal_b});
+  formulation.initial_ee_W_.push_back({-x_nominal_b, -y_nominal_b, z_nominal_b});
 
   // define the desired goal state of Anymal
   formulation.final_base_.lin.at(towr::kPos) << 1.0, 0.0, 0.5;
@@ -67,9 +73,9 @@ int main()
   
   // TO-DO! Add 3 more legs 
   formulation.params_.ee_phase_durations_.push_back({0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.2}); 
-  formulation.params_.ee_phase_durations_.push_back({0, 0, 0, 0, 0, 0, 0});
-  formulation.params_.ee_phase_durations_.push_back({0, 0, 0, 0, 0, 0, 0});
-  formulation.params_.ee_phase_durations_.push_back({0, 0, 0, 0, 0, 0, 0});
+  formulation.params_.ee_phase_durations_.push_back({0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2});
+  formulation.params_.ee_phase_durations_.push_back({0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.2});
+  formulation.params_.ee_phase_durations_.push_back({0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2});
   formulation.params_.ee_in_contact_at_start_.push_back(true);
   formulation.params_.ee_in_contact_at_start_.push_back(true);
   formulation.params_.ee_in_contact_at_start_.push_back(true);
