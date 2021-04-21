@@ -29,6 +29,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <cmath>
 #include <iostream>
+#include <fstream>
 
 #include <towr/terrain/examples/height_map_examples.h>
 #include <towr/nlp_formulation.h>
@@ -48,22 +49,23 @@ int main()
 
   // terrain
   formulation.terrain_ = std::make_shared<FlatGround>(0.0);
+  // formulation.terrain_ = std::make_shared<Slope>();
 
   // Kinematic limits and dynamic parameters of Anymal
   formulation.model_ = RobotModel(RobotModel::Anymal);
 
   // set the initial position of Anymal
-  formulation.initial_base_.lin.at(kPos).z() = 0.5;
+  formulation.initial_base_.lin.at(kPos).z() = 0.42; // OG 0.5 
     const double x_nominal_b = 0.34;
     const double y_nominal_b = 0.19;
-    const double z_nominal_b = -0.42;
+    const double z_nominal_b = 0; // OG -0.42
   formulation.initial_ee_W_.push_back({x_nominal_b, y_nominal_b, z_nominal_b});
   formulation.initial_ee_W_.push_back({x_nominal_b, -y_nominal_b, z_nominal_b});
   formulation.initial_ee_W_.push_back({-x_nominal_b, y_nominal_b, z_nominal_b});
   formulation.initial_ee_W_.push_back({-x_nominal_b, -y_nominal_b, z_nominal_b});
 
   // define the desired goal state of Anymal
-  formulation.final_base_.lin.at(towr::kPos) << 1.0, 0.0, 0.5;
+  formulation.final_base_.lin.at(towr::kPos) << 10.0, 0.0, 0.5;
 
   // Parameters that define the motion. See c'tor for default values or
   // other values that can be modified.
@@ -72,10 +74,20 @@ int main()
   // alternating stance and swing:     ____-----_____-----_____-----
   
   // TO-DO! Add 3 more legs 
-  formulation.params_.ee_phase_durations_.push_back({0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.2}); 
-  formulation.params_.ee_phase_durations_.push_back({0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2});
-  formulation.params_.ee_phase_durations_.push_back({0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.2});
-  formulation.params_.ee_phase_durations_.push_back({0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2});
+  // formulation.params_.ee_phase_durations_.push_back({0.4, 0.4, 0.2, 0.4, 0.2, 0.4, 0}); 
+  // formulation.params_.ee_phase_durations_.push_back({0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2});
+  // formulation.params_.ee_phase_durations_.push_back({0.4, 0.4, 0.2, 0.4, 0.2, 0.4, 0}); 
+  // formulation.params_.ee_phase_durations_.push_back({0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2});
+
+  formulation.params_.ee_phase_durations_.push_back({0.4, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0}); 
+  formulation.params_.ee_phase_durations_.push_back({0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2});
+  formulation.params_.ee_phase_durations_.push_back({0.4, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0});
+  formulation.params_.ee_phase_durations_.push_back({0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2});
+
+  // formulation.params_.ee_phase_durations_.push_back({0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2}); 
+  // formulation.params_.ee_phase_durations_.push_back({0.2, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0});
+  // formulation.params_.ee_phase_durations_.push_back({0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2});
+  // formulation.params_.ee_phase_durations_.push_back({0.2, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0.2, 0.4, 0});
   formulation.params_.ee_in_contact_at_start_.push_back(true);
   formulation.params_.ee_in_contact_at_start_.push_back(true);
   formulation.params_.ee_in_contact_at_start_.push_back(true);
@@ -113,28 +125,65 @@ int main()
   cout << fixed;
   cout << "\n====================\nMonoped trajectory:\n====================\n";
 
+  ofstream outfile;
+  outfile.open ("example.txt");
+  outfile << "time , lin_pos[m] , euler_rpy[deg] , foot1_pos[m] , foot2_pos[m] , foot3_pos[m] , foot4_pos[m] , foot1_F[N] , foot2_F[N] , foot3_F[N] , foot4_F[N] , foot1_contact , foot2_contact , foot3_contact , foot4_contact \n"; 
   double t = 0.0;
   while (t<=solution.base_linear_->GetTotalTime() + 1e-5) {
+  // while (t<=solution.base_linear_->GetTotalTime() + 10) {
     cout << "t=" << t << "\n";
-    cout << "Base linear position x,y,z:   \t";
-    cout << solution.base_linear_->GetPoint(t).p().transpose() << "\t[m]" << endl;
+    outfile << t << ",";
+    cout << "Base linear position x,y,z:   ,";
+    cout << solution.base_linear_->GetPoint(t).p().transpose() << ",[m]" << endl;
+    outfile << solution.base_linear_->GetPoint(t).p().transpose() << ",";
 
-    cout << "Base Euler roll, pitch, yaw:  \t";
+    cout << "Base Euler roll, pitch, yaw:  ,";
     Eigen::Vector3d rad = solution.base_angular_->GetPoint(t).p();
-    cout << (rad/M_PI*180).transpose() << "\t[deg]" << endl;
+    cout << (rad/M_PI*180).transpose() << ",[deg]" << endl;
+    outfile << (rad/M_PI*180).transpose() << "," ;
 
-    cout << "Foot position x,y,z:          \t";
-    cout << solution.ee_motion_.at(0)->GetPoint(t).p().transpose() << "\t[m]" << endl;
+    cout << "Foot position x,y,z:          ,";
+    cout << solution.ee_motion_.at(0)->GetPoint(t).p().transpose() << ",[m]" << endl;
+    outfile <<solution.ee_motion_.at(0)->GetPoint(t).p().transpose() << "," ; 
+    cout << solution.ee_motion_.at(1)->GetPoint(t).p().transpose() << ",[m]" << endl;
+    outfile <<solution.ee_motion_.at(1)->GetPoint(t).p().transpose() << "," ; 
+    cout << solution.ee_motion_.at(2)->GetPoint(t).p().transpose() << ",[m]" << endl;
+    outfile <<solution.ee_motion_.at(2)->GetPoint(t).p().transpose() << "," ; 
+    cout << solution.ee_motion_.at(3)->GetPoint(t).p().transpose() << ",[m]" << endl;
+    outfile <<solution.ee_motion_.at(3)->GetPoint(t).p().transpose() << "," ; 
 
-    cout << "Contact force x,y,z:          \t";
-    cout << solution.ee_force_.at(0)->GetPoint(t).p().transpose() << "\t[N]" << endl;
+    cout << "Contact force x,y,z:          ,";
+    cout << solution.ee_force_.at(0)->GetPoint(t).p().transpose() << ",[N]" << endl;
+    outfile << solution.ee_force_.at(0)->GetPoint(t).p().transpose() << "," ; 
+    cout << solution.ee_force_.at(1)->GetPoint(t).p().transpose() << ",[N]" << endl;
+    outfile << solution.ee_force_.at(1)->GetPoint(t).p().transpose() << "," ; 
+    cout << solution.ee_force_.at(2)->GetPoint(t).p().transpose() << ",[N]" << endl;
+    outfile << solution.ee_force_.at(2)->GetPoint(t).p().transpose() << "," ; 
+    cout << solution.ee_force_.at(3)->GetPoint(t).p().transpose() << ",[N]" << endl;
+    outfile << solution.ee_force_.at(3)->GetPoint(t).p().transpose() << endl; 
 
-    bool contact = solution.phase_durations_.at(0)->IsContactPhase(t);
-    std::string foot_in_contact = contact? "yes" : "no";
-    cout << "Foot in contact:              \t" + foot_in_contact << endl;
+    // bool contact = solution.phase_durations_.at(0)->IsContactPhase(t);
+    // std::string foot_in_contact = contact? "yes" : "no";
+    // cout << "Foot in contact:              ," + foot_in_contact << endl;
+    // outfile << foot_in_contact << endl; 
+    // bool contact = solution.phase_durations_.at(1)->IsContactPhase(t);
+    // std::string foot_in_contact = contact? "yes" : "no";
+    // cout << "Foot in contact:              ," + foot_in_contact << endl;
+    // outfile << foot_in_contact << endl; 
+    // bool contact = solution.phase_durations_.at(2)->IsContactPhase(t);
+    // std::string foot_in_contact = contact? "yes" : "no";
+    // cout << "Foot in contact:              ," + foot_in_contact << endl;
+    // outfile << foot_in_contact << endl; 
+    // bool contact = solution.phase_durations_.at(3)->IsContactPhase(t);
+    // std::string foot_in_contact = contact? "yes" : "no";
+    // cout << "Foot in contact:              ," + foot_in_contact << endl;
+    // outfile << foot_in_contact << endl; 
 
     cout << endl;
 
-    t += 0.2;
+    // outfile << "Writing this to a file.\n";
+
+    t += 0.01;
   }
+  outfile.close();
 }
