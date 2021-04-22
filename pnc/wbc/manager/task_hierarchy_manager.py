@@ -44,7 +44,10 @@ class TaskHierarchyManager(object):
         self._w_min : Final time weight at self._start_time + self._duration
 
         """
-        self._task.w_hierarchy = 0.
+        s=(t-self._start_time)/self._duration
+        self._task.w_hierarchy = (1 - s) * self._w_starting + s * self._w_min
+        #self._task.w_hierarchy = 0.
+        print(s)
 
     def update_ramp_to_max(self, current_time):
         t = np.clip(current_time, self._start_time,
@@ -69,4 +72,7 @@ class TaskHierarchyManager(object):
         self._w_max : Final time weight at self._start_time + self._duration
 
         """
-        self._task.w_hierarchy = 0.
+        s=(t-self._start_time)/self._duration
+        self._task.w_hierarchy = (1 - s) * self._w_starting + s * self._w_max
+        print(s)
+        #self._task.w_hierarchy = 0.

@@ -1,5 +1,5 @@
 import numpy as np
-
+import pdb
 
 class ReactionForceManager(object):
     def __init__(self, contact, maximum_rf_z_max, robot):
@@ -45,8 +45,12 @@ class ReactionForceManager(object):
         self.self._minimum_rf_z_max : Final time upper bound at self._start_time
                                       + self._duration
         """
-        self._contact.rf_z_max = 0.
-
+        
+        s=((t-self._start_time)/self._duration)
+        
+        self._contact.rf_z_max = (1 - s) * self._starting_rf_z_max + s * self._minimum_rf_z_max
+        pdb.set_trace()
+        pdb.set_trace()
     def update_ramp_to_max(self, current_time):
         t = np.clip(current_time, self._start_time,
                     self._start_time + self._duration)
@@ -72,4 +76,7 @@ class ReactionForceManager(object):
                                       + self._duration
 
         """
-        self._contact.rf_z_max = 0.
+        s=((t-self._start_time)/self._duration)
+        self._contact.rf_z_max = (1 - s) * self._starting_rf_z_max + s * self._maximum_rf_z_max
+        pdb.set_trace()
+        pdb.set_trace()
