@@ -166,11 +166,12 @@ class AtlasControlArchitecture(ControlArchitecture):
         command = self._atlas_controller.get_command()
 
         if self._state_machine[self._state].end_of_state():
+            # breakpoint()
             self._state_machine[self._state].last_visit()
             self._prev_state = self._state
             self._state = self._state_machine[self._state].get_next_state()
             self._b_state_first_visit = True
-
+            # breakpoint()
         return command
 
     @property

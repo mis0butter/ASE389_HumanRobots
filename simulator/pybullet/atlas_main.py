@@ -110,6 +110,8 @@ if __name__ == "__main__":
         sensor_data['b_rf_contact'] = True if rf_height <= 0.01 else False
         sensor_data['b_lf_contact'] = True if lf_height <= 0.01 else False
 
+        # breakpoint()
+
         # Get Keyboard Event
         keys = p.getKeyboardEvents()
         if pybullet_util.is_key_triggered(keys, '8'):
@@ -131,6 +133,8 @@ if __name__ == "__main__":
         if SimConfig.PRINT_TIME:
             start_time = time.time()
         command = interface.get_command(copy.deepcopy(sensor_data))
+
+        # breakpoint()
 
         if SimConfig.PRINT_TIME:
             end_time = time.time()

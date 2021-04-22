@@ -49,8 +49,7 @@ class ReactionForceManager(object):
         s=((t-self._start_time)/self._duration)
         
         self._contact.rf_z_max = (1 - s) * self._starting_rf_z_max + s * self._minimum_rf_z_max
-        pdb.set_trace()
-        pdb.set_trace()
+        # pdb.set_trace()
     def update_ramp_to_max(self, current_time):
         t = np.clip(current_time, self._start_time,
                     self._start_time + self._duration)
@@ -78,5 +77,4 @@ class ReactionForceManager(object):
         """
         s=((t-self._start_time)/self._duration)
         self._contact.rf_z_max = (1 - s) * self._starting_rf_z_max + s * self._maximum_rf_z_max
-        pdb.set_trace()
-        pdb.set_trace()
+        # pdb.set_trace()
