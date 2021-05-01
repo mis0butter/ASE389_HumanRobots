@@ -1,0 +1,8 @@
+prefix=/home/june/catkin_ws/devel_isolated/xpp_quadrotor
+
+Name: xpp_quadrotor
+Description: Description of xpp_quadrotor
+Version: 1.0.10
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

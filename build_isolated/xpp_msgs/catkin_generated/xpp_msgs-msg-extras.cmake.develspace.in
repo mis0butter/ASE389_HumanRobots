@@ -1,0 +1,2 @@
+set(xpp_msgs_MESSAGE_FILES "/home/june/catkin_ws/src/xpp/xpp_msgs/msg/StateLin3d.msg;/home/june/catkin_ws/src/xpp/xpp_msgs/msg/State6d.msg;/home/june/catkin_ws/src/xpp/xpp_msgs/msg/RobotStateCartesianTrajectory.msg;/home/june/catkin_ws/src/xpp/xpp_msgs/msg/RobotStateCartesian.msg;/home/june/catkin_ws/src/xpp/xpp_msgs/msg/RobotStateJoint.msg;/home/june/catkin_ws/src/xpp/xpp_msgs/msg/RobotParameters.msg;/home/june/catkin_ws/src/xpp/xpp_msgs/msg/TerrainInfo.msg")
+set(xpp_msgs_SERVICE_FILES "")

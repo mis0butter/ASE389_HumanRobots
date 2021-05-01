@@ -1,0 +1,8 @@
+prefix=/home/june/catkin_ws/devel_isolated/towr_ros
+
+Name: towr_ros
+Description: Description of towr_ros
+Version: 1.4.1
+Cflags: -I/home/june/catkin_ws/devel_isolated/towr_ros/include -I/home/june/catkin_ws/src/towr/towr_ros/include -I/home/june/catkin_ws/devel_isolated/towr/include -I/home/june/catkin_ws/devel_isolated/ifopt/include -I/usr/include/eigen3
+Libs: -L${prefix}/lib -ltowr_ros /home/june/catkin_ws/devel_isolated/towr/lib/libtowr.so /home/june/catkin_ws/devel_isolated/ifopt/lib/libifopt_core.so /home/june/catkin_ws/devel_isolated/ifopt/lib/libifopt_ipopt.so
+Requires: xpp_states roscpp

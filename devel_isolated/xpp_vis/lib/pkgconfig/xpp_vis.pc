@@ -1,0 +1,8 @@
+prefix=/home/june/catkin_ws/devel_isolated/xpp_vis
+
+Name: xpp_vis
+Description: Description of xpp_vis
+Version: 1.0.10
+Cflags: -I/home/june/catkin_ws/src/xpp/xpp_vis/include
+Libs: -L${prefix}/lib -lxpp_vis
+Requires: xpp_states xpp_msgs

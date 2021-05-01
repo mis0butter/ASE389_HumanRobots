@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/june/catkin_ws/devel_isolated/xpp_examples/setup.sh

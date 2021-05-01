@@ -1,0 +1,1 @@
+set(ORDERED_PATHS "/home/june/catkin_ws/devel_isolated/xpp_vis/lib;/home/june/catkin_ws/devel_isolated/xpp_states/lib;/opt/ros/kinetic/lib")
