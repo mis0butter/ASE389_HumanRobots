@@ -20,9 +20,9 @@ float pheromoneIntensity = 10;
 float initialPheromoneIntensity = 10;
 float evaporationRate = 0.3f;
 int numAnts = 20;
-int totalAnts = 500;
+int totalAnts = 2000;
 int numberOfRuns = totalAnts/numAnts;
-
+int wtf = 0;
 //Define node parameters
 float gridlengthX = 10.0;
 float gridlengthY = 10.0;
@@ -31,13 +31,6 @@ int number_of_nodes = 20;
 //create list of nodes
 vector<node> node_list = create_node_list(gridlengthX, gridlengthY, number_of_nodes);
 
-//Test Node list
-// for (int i = 0; i<node_list.size(); i++)
-// {
-//     std::cout << "X coordinate: " << node_list[i].Xposition << "  "
-//     << "Y coordinate: " << node_list[i].Yposition << "  "
-//     << "ID: " << node_list[i].nodeID << '\n';
-// }
 
 //Find weighting matrices
 
@@ -54,9 +47,7 @@ for (int i = 0; i<node_list.size(); i++)
     {   
         distanceArray[i][j] = distance(node_list[i],node_list[j]);
         pheromoneArray[i][j] = initialPheromoneIntensity;
-        // cout << distanceArray[i][j] << " ";
     }
-    // cout << "\n";
 }
 
 //create vector of ants
@@ -83,8 +74,8 @@ for (int x = 0; x<numberOfRuns; x++)
     for (int y = 0; y<numAnts; y++)
     {   
         //starting ID for ant
-        //int startingID = rand() % node_list.size();
-        int startingID = 0;
+        int startingID = rand() % node_list.size();
+        //int startingID = 0;
 
         //create vector of remaining nodes to visit
         vector<node> remainingNodeList = node_list;
@@ -92,34 +83,14 @@ for (int x = 0; x<numberOfRuns; x++)
         node currentNode = firstNode;
 
         //get first node ID and erase it from potentials
-        //try 1
         vector<node>::iterator it = remainingNodeList.begin() + firstNode.nodeID;
-        
         remainingNodeList.erase(it);
-        for (int i = 0; i<remainingNodeList.size(); i++)
-        {
-            cout << remainingNodeList[i].nodeID;
-        }
-        cout << "\n";
-        cout <<startingID;
-        cout << "\n";
-
-        //try 2
-        //vector<node>::iterator it = node_list.begin() + startingID;
-        //remainingNodeList.erase(it);
-        //cout << remainingNodeList.size() << std::endl;
-
-        //define temporary desirability vector
-        //vector<float> tempDesirability;
-
-        // cout << "wtf";
-
+    
 
         //iterate over all points
         
-        for (int i = 0; i<number_of_nodes; i++)
+        for (int i = 0; i<number_of_nodes-1; i++)
         {
-            //cout << remainingNodeList.size();
             for (int j = 0; j<remainingNodeList.size(); j++)
             {   
 
@@ -138,10 +109,7 @@ for (int x = 0; x<numberOfRuns; x++)
 
                     //set desirability
                     remainingNodeList[j].desirability = findDesirability(dst, dstPower, pheromoneStrength, pheromonePower);
-                    //cout << remainingNodeList.size();
                 }
-                //cout << remainingNodeList[j].desirability << "  " << distanceArray[currentNode.nodeID][j] << "  " << pheromoneArray[currentNode.nodeID][j] << "  " << currentNode.nodeID << "  " << potentialNode.nodeID << "\n";
-
             }
 
             //calculate total desirability
@@ -151,8 +119,9 @@ for (int x = 0; x<numberOfRuns; x++)
             {
                 totalDesirability += remainingNodeList[j].desirability;
             }
-            //cout << totalDesirability << "\n";
             float accumulation = 0;
+
+
             //calculate normalized desirability & accumulated normalized desirability
             for (int j = 0; j<remainingNodeList.size(); j++)
             {
@@ -163,16 +132,15 @@ for (int x = 0; x<numberOfRuns; x++)
 
             double randNum = RandomFloat(0, 1);
             node chosenNode;
-            //cout << remainingNodeList.size();
+
             //Find the chosenNode
             int j = 0;
             while (remainingNodeList[j].accumulatedND < randNum)
             {
                 j++;
             }
-            chosenNode = remainingNodeList[j];
 
-            //cout << totalDesirability << "\n";
+            chosenNode = remainingNodeList[j];
 
             //update path
             vecAnts[y].path[i][0] = currentNode.nodeID;
@@ -187,15 +155,9 @@ for (int x = 0; x<numberOfRuns; x++)
             //remove chosenNode from remainingNodeList
             vector<node>::iterator it = remainingNodeList.begin() + j;
             remainingNodeList.erase(it);
-
-            //cout << remainingNodeList.size() << " remaining node list size\n";
-            //cout << i << " i iterator\n";
-            cout << remainingNodeList.size();
         }
 
-        //cout << number_of_nodes << "number of nodes\n";
         //Travel to beginning
-        //may need to change to (number_of_nodes - 1)
         vecAnts[y].path[number_of_nodes - 1][0] = currentNode.nodeID;
         vecAnts[y].path[number_of_nodes - 1][1] = firstNode.nodeID;
         vecAnts[y].totalDistanceTraveled += distanceArray[currentNode.nodeID][firstNode.nodeID];
@@ -226,7 +188,6 @@ for (int x = 0; x<numberOfRuns; x++)
         }
 
         //Strengthen best trail
-        //cout << bestPath[y] [0] << "  " << bestPath[y] [1] << '\n';
         pheromoneArray[ bestPath[y] [0] ]     [ bestPath[y] [1] ] += pheromoneIntensity;
         pheromoneArray[ bestPath[y] [1] ]     [ bestPath[y] [0] ] += pheromoneIntensity;
     }
