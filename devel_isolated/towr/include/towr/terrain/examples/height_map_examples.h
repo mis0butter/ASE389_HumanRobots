@@ -56,11 +56,47 @@ private:
  */
 class test : public HeightMap {
 public:
-  test(double height = 0.0);
-  double GetHeight(double x, double y)  const override { return height_; };
+  double GetHeight(double x, double y)  const override;
+  // double GetHeightDerivWrtX(double x, double y) const override;
 
 private:
-  double height_; // [m]
+  double w            = 0.2; 
+  double height_      = 20; // [m]
+  double l8           = 8; 
+  double l10          = 10; 
+
+  // wall 1 
+  double x_start_1    = 12;
+  double y_start_1    = 0; 
+
+  // wall 2 
+  double x_start_2    = 0; 
+  double y_start_2    = 2;  
+
+  // wall 3 
+  double x_start_3    = 10; 
+  double y_start_3    = 4; 
+
+  // wall 4 
+  double x_start_4    = 12; 
+  double y_start_4    = 10; 
+
+  // wall 5 
+  double x_start_5    = 12; 
+  double y_start_5    = 10; 
+
+  // wall 6 
+  double x_start_6    = 0; 
+  double y_start_6    = 12; 
+
+  // wall 7 
+  double x_start_7    = 10; 
+  double y_start_7    = 14; 
+
+  // wall 8 
+  double x_start_8    = 12; 
+  double y_start_8    = 20; 
+
 };
 
 /**
